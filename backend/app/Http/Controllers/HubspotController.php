@@ -26,8 +26,6 @@ class HubSpotController extends Controller
     {
         $tokens = $this->hubspot->fetchAccessToken($request->code);
 
-        // TODO: Save tokens to DB with associated user/account
-
         return response()->json([
             'message' => 'HubSpot connected!',
             'tokens' => $tokens
