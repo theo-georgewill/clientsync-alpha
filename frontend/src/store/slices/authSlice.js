@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '../../services/api';
+import api from '@/services/api';
 
 // Async Thunks
 export const fetchUser = createAsyncThunk('auth/fetchUser', async (_, { rejectWithValue }) => {
@@ -21,20 +21,27 @@ export const login = createAsyncThunk('auth/login', async (credentials, { dispat
 	}
 });
 
-export const logout = createAsyncThunk('auth/logout', async () => {
-	await api.post('/api/logout');
+export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValue }) => {
+	try {
+		await api.post('/api/logout');
+		return null;
+	} catch (err) {
+		console.error('Logout failed:', err.response || err.message);
+		return rejectWithValue(err.response?.data?.message || 'Logout failed');
+	}
 });
 
 const authSlice = createSlice({
 	name: 'auth',
 	initialState: {
 		user: null,
-		loading: true,
+		loading: false,
 		error: null,
 	},
 	reducers: {},
 	extraReducers: (builder) => {
 		builder
+			//fetch user actions
 			.addCase(fetchUser.pending, (state) => {
 				state.loading = true;
 			})
@@ -46,6 +53,8 @@ const authSlice = createSlice({
 				state.user = null;
 				state.loading = false;
 			})
+			
+			//login actions
 			.addCase(login.fulfilled, (state, action) => {
 				state.user = action.payload;
 				state.error = null;
@@ -53,9 +62,11 @@ const authSlice = createSlice({
 			.addCase(login.rejected, (state, action) => {
 				state.error = action.payload;
 			})
+
 			.addCase(logout.fulfilled, (state) => {
 				state.user = null;
-			});
+				state.error = null;
+			})
 	},
 });
 

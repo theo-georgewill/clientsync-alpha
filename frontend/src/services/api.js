@@ -2,18 +2,24 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: 'http://localhost:8000',
-  withCredentials: true, // required for Sanctum
+  withCredentials: true, 
 });
 
-// Auto-set CSRF cookie before login
-export const getCsrfCookie = () => api.get('/sanctum/csrf-cookie');
+// Simple cookie parser function
+function getCookie(name) {
+	const value = `; ${document.cookie}`;
+	const parts = value.split(`; ${name}=`);
+	if (parts.length === 2) return parts.pop().split(';').shift();
+}
 
-// Auth endpoints
-export const loginRequest = (data) => api.post('/api/login', data);
-export const logoutRequest = () => api.post('/api/logout');
-export const fetchUserRequest = () => api.get('/api/user');
+// ✅ Automatically attach the CSRF token from the cookie
+api.interceptors.request.use((config) => {
+	const xsrfToken = getCookie('XSRF-TOKEN');
+	if (xsrfToken) {
+		config.headers['X-XSRF-TOKEN'] = decodeURIComponent(xsrfToken);
+	}
+	return config;
+});
 
-// Example: business endpoints
-export const fetchContacts = () => api.get('/api/contacts');
 
 export default api;

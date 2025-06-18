@@ -1,11 +1,15 @@
-// src/components/RequireAuth.jsx
 import { useSelector } from 'react-redux';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
 export default function RequireAuth({ children }) {
   const { user, loading } = useSelector((state) => state.auth);
+  const location = useLocation();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>Checking authentication...</div>;
 
-  return user ? children : <Navigate to="/login" replace />;
+  if (!user) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return children;
 }

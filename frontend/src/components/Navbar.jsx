@@ -17,6 +17,7 @@ const Navbar = () => {
 				<Dropdown.Menu>
 					<Dropdown.Item as={Link} to="/login">Login</Dropdown.Item>
 					<Dropdown.Item as={Link} to="/signup">Sign Up</Dropdown.Item>
+					<Dropdown.Item as={Link} to="/logout">Log out</Dropdown.Item>
 				</Dropdown.Menu>
 			</Dropdown>
 		</nav>
