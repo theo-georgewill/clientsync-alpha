@@ -11,7 +11,19 @@ const Sidebar = () => {
 					<Link className="nav-link" to="/">Dashboard</Link>
 				</li>
 				<li className="nav-item">
-					<Link className="nav-link" to="/connect">Connect HubSpot</Link>
+					<Link className="nav-link" to="/contacts">Contacts</Link>
+				</li>
+				<li className="nav-item">
+					<Link className="nav-link" to="/deals">Deals</Link>
+				</li>
+				<li className="nav-item">
+					<Link className="nav-link" to="/integrations">Integrations</Link>
+				</li>
+				<li className="nav-item">
+					<Link className="nav-link" to="/activities">Activities</Link>
+				</li>
+				<li className="nav-item">
+					<Link className="nav-link" to="/settings">Settings</Link>
 				</li>
 			</ul>
 		</div>
