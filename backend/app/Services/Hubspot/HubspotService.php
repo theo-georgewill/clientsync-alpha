@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Hubspot;
 
 use Illuminate\Support\Facades\Http;
 
@@ -42,7 +42,7 @@ class HubSpotService
         return $response->json();
     }
 
-    //to get the hubspot user data 
+    //to get the hubspot user data
     public function getTokenInfo(string $accessToken): array
     {
         $response = Http::withToken($accessToken)
@@ -69,6 +69,35 @@ class HubSpotService
         $response = Http::withToken($accessToken)->get('https://api.hubapi.com/crm/v3/objects/contacts');
 
         return $response->json();
+    }
+
+
+    public function getPipelines(string $accessToken): array
+    {
+        return Http::withToken($accessToken)
+            ->get('https://api.hubapi.com/crm/v3/pipelines/deals')
+            ->json();
+    }
+
+    public function getDeals(string $accessToken): array
+    {
+        return Http::withToken($accessToken)
+            ->get('https://api.hubapi.com/crm/v3/objects/deals?properties=dealname,amount,pipeline,dealstage&limit=100')
+            ->json();
+    }
+
+    public function getContactsWithDetails(string $accessToken): array
+    {
+        return Http::withToken($accessToken)
+            ->get('https://api.hubapi.com/crm/v3/objects/contacts?properties=email,firstname,lastname&limit=100')
+            ->json();
+    }
+
+    public function getCompanies(string $accessToken): array
+    {
+        return Http::withToken($accessToken)
+            ->get('https://api.hubapi.com/crm/v3/objects/companies?properties=name,domain&limit=100')
+            ->json();
     }
 
 }
