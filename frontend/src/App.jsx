@@ -16,6 +16,7 @@ import Activities from '@/pages/Activities';
 import Settings from '@/pages/Settings';
 import Integrations from './pages/Integrations';
 import RequireAuth from '@/components/RequireAuth';
+import HubSpotCallback from '@/components/HubspotCallbackHandler'; 
 
 export default function App() {
 	const dispatch = useDispatch();
@@ -56,6 +57,7 @@ export default function App() {
 				<Route element={<RequireAuth><Main /></RequireAuth>}>
 					<Route path="/" element={<Dashboard />} />
 					<Route path="/integrations" element={<Integrations />} />
+					<Route path="/integrations/hubspot/callback" element={<HubSpotCallback />} /> 
 					<Route path="/contacts" element={<Contacts />} />
 					<Route path="/deals" element={<Deals />} />
 					<Route path="/activities" element={<Activities />} />

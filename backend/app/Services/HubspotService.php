@@ -42,6 +42,16 @@ class HubSpotService
         return $response->json();
     }
 
+    //to get the hubspot user data 
+    public function getTokenInfo(string $accessToken): array
+    {
+        $response = Http::withToken($accessToken)
+            ->get('https://api.hubapi.com/oauth/v1/access-tokens/' . $accessToken);
+
+        return $response->json();
+    }
+
+
     public function refreshAccessToken(string $refreshToken): array
     {
         $response = Http::asForm()->post('https://api.hubapi.com/oauth/v1/token', [
@@ -61,5 +71,4 @@ class HubSpotService
         return $response->json();
     }
 
-    // Add more wrappers as needed (e.g. create contact, get workflows)
 }

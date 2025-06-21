@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Services\HubSpotService;
 use App\Models\User;
+use App\Models\HubspotAccount;
 
 class HubSpotController extends Controller
 {
@@ -30,36 +31,61 @@ class HubSpotController extends Controller
      * Step 2: Handle HubSpot OAuth callback from frontend
      * Frontend should POST the `code` here after receiving it
      */
+
     public function handleCallback(Request $request)
     {
-        $request->validate([
-            'code' => 'required|string',
-        ]);
+        $user = $request->user();
+        $code = $request->input('code');
 
-        $tokens = $this->hubspot->fetchAccessToken($request->code);
-
-        if (!isset($tokens['access_token'])) {
-            return response()->json(['error' => 'Failed to retrieve access token'], 500);
+        if (!$code) {
+            return response()->json(['error' => 'Missing code'], 400);
         }
 
-        //$user = Auth::user();
-        $user = User::find(1);
+        $tokens = $this->hubspot->fetchAccessToken($code);
+        $tokenInfo = $this->hubspot->getTokenInfo($tokens['access_token']);
 
-        $user->hubspotAccount()->updateOrCreate([], [
-            'access_token' => $tokens['access_token'],
-            'refresh_token' => $tokens['refresh_token'],
-            'expires_at' => now()->addSeconds($tokens['expires_in']),
-            'hubspot_user_id' => $tokens['hub_id'] ?? null,
-            'scopes' => explode(' ', $tokens['scope'] ?? ''),
-        ]);
+        $hubspotUserId = $tokenInfo['hub_id'] ?? null;
+        if (!$hubspotUserId) {
+            return response()->json(['error' => 'HubSpot user ID missing'], 400);
+        }
 
-        return response()->json(['message' => 'HubSpot connected successfully']);
+        // Include trashed (soft-deleted) records in search
+        $existingAccount = HubspotAccount::withTrashed()
+            ->where('hubspot_user_id', $hubspotUserId)
+            ->first();
+
+        if ($existingAccount) {
+            // If soft-deleted, restore it
+            if ($existingAccount->trashed()) {
+                $existingAccount->restore();
+            }
+
+            // Update tokens and scopes
+            $existingAccount->update([
+                'access_token' => $tokens['access_token'],
+                'refresh_token' => $tokens['refresh_token'],
+                'expires_at' => now()->addSeconds($tokens['expires_in']),
+                'scopes' => implode(' ', $tokenInfo['scopes'] ?? []),
+                'user_id' => $user->id, // optionally update user relation
+            ]);
+        } else {
+            // Create new record
+            $user->hubspotAccount()->create([
+                'hubspot_user_id' => $hubspotUserId,
+                'access_token' => $tokens['access_token'],
+                'refresh_token' => $tokens['refresh_token'],
+                'expires_at' => now()->addSeconds($tokens['expires_in']),
+                'scopes' => implode(' ', $tokenInfo['scopes'] ?? []),
+            ]);
+        }
+
+        return response()->json(['message' => 'HubSpot Connected']);
     }
+
 
     public function status()
     {
-       // $user = auth()->user();
-       $user = User::find(1);
+        $user = auth()->user();
         $account = $user->hubspotAccount;
 
         if (!$account) {
@@ -69,10 +95,11 @@ class HubSpotController extends Controller
         return response()->json([
             'connected' => true,
             'last_synced' => $account->updated_at->toDateTimeString(),
-            'scopes' => $account->scopes ?? [],
+
         ]);
     }
 
+    //disconnect hubspot account
     public function disconnect()
     {
         $user = auth()->user();
@@ -85,5 +112,7 @@ class HubSpotController extends Controller
 
         return response()->json(['message' => 'HubSpot disconnected successfully.']);
     }
+
+
 
 }
