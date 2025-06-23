@@ -100,4 +100,32 @@ class HubSpotService
             ->json();
     }
 
+    public function createDeal(array $data, string $accessToken): array
+    {
+        $response = Http::withToken($accessToken)
+            ->post('https://api.hubapi.com/crm/v3/objects/deals', [
+                'properties' => $data,
+            ]);
+
+        if ($response->failed()) {
+            throw new \Exception('Error creating deal: ' . $response->body());
+        }
+
+        return $response->json();
+    }
+
+    public function updateDeal(string $dealId, array $data, string $accessToken): array
+    {
+        $response = Http::withToken($accessToken)
+            ->patch("https://api.hubapi.com/crm/v3/objects/deals/{$dealId}", [
+                'properties' => $data,
+            ]);
+
+        if ($response->failed()) {
+            throw new \Exception('Error updating deal: ' . $response->body());
+        }
+
+        return $response->json();
+    }
+
 }

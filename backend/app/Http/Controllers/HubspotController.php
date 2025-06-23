@@ -7,7 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\Hubspot\HubSpotService;
 use App\Models\User;
 use App\Models\HubspotAccount;
-
+use App\Services\Hubspot\PipelineService;
+use App\Services\Hubspot\DealService;
+use App\Services\Hubspot\ContactService;
+use App\Services\Hubspot\CompanyService;
 class HubSpotController extends Controller
 {
     protected HubSpotService $hubspot;
@@ -113,6 +116,29 @@ class HubSpotController extends Controller
         return response()->json(['message' => 'HubSpot disconnected successfully.']);
     }
 
+
+    public function sync(
+        PipelineService $pipelineService,
+        DealService $dealService,
+        ContactService $contactService,
+        CompanyService $companyService
+    ) {
+        $user = auth()->user();
+        $account = $user->hubspotAccount;
+
+        if (!$account || !$account->access_token) {
+            return response()->json(['error' => 'No connected HubSpot account'], 400);
+        }
+
+        $accessToken = $account->access_token;
+
+        $pipelineService->sync($accessToken);
+        $dealService->sync($accessToken);
+        $contactService->sync($accessToken);
+        $companyService->sync($accessToken);
+
+        return response()->json(['message' => 'HubSpot data synced successfully']);
+    }
 
 
 }

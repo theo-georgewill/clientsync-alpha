@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HubSpotController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DealController;
 use App\Models\User;
 
 // Login
@@ -25,5 +26,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/hubspot/status', [HubSpotController::class, 'status']);
     Route::post('/hubspot/disconnect', [HubSpotController::class, 'disconnect']);
     Route::post('/hubspot/callback', [HubSpotController::class, 'handleCallback']);
+    Route::post('/hubspot/sync', [HubSpotController::class, 'sync']);
+
+    //Deal protected route
+    Route::post('/deals', [DealController::class, 'store']);
 });
 
