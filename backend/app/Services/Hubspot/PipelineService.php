@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\HubSpot;
 
 use App\Models\Pipeline;
@@ -13,9 +14,12 @@ class PipelineService
         $this->hubSpot = $hubSpot;
     }
 
-    public function sync(string $accessToken): bool
+    /**
+     * Sync all pipelines and stages from HubSpot for the given user.
+     */
+    public function sync(int $userId, HubSpotTokenManager $tokenManager): bool
     {
-        $response = $this->hubSpot->getPipelines($accessToken);
+        $response = $this->hubSpot->getPipelines($userId, $tokenManager);
 
         if (!isset($response['results'])) {
             logger()->error('Pipeline sync failed', ['response' => $response]);
@@ -27,7 +31,7 @@ class PipelineService
                 ['hubspot_id' => $pipe['id']],
                 [
                     'label' => $pipe['label'],
-                    'label_key' => $pipe['labelKey'],
+                    'label_key' => $pipe['labelKey'] ?? null, // Avoid undefined index
                 ]
             );
 
@@ -36,7 +40,7 @@ class PipelineService
                     ['hubspot_id' => $stage['id']],
                     [
                         'label' => $stage['label'],
-                        'label_key' => $stage['labelKey'],
+                        'label_key' => $stage['labelKey'] ?? null, // Avoid undefined index
                         'display_order' => $stage['displayOrder'] ?? 0,
                     ]
                 );
@@ -46,4 +50,3 @@ class PipelineService
         return true;
     }
 }
-

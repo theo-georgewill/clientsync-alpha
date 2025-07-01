@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\HubSpot;
 
 use App\Models\Deal;
@@ -14,9 +15,16 @@ class DealService
         $this->hubSpot = $hubSpot;
     }
 
-    public function sync(string $accessToken): bool
+    /**
+     * Sync deals from HubSpot.
+     *
+     * @param int $userId
+     * @param HubSpotTokenManager $tokenManager
+     * @return bool
+     */
+    public function sync(int $userId, HubSpotTokenManager $tokenManager): bool
     {
-        $response = $this->hubSpot->getDeals($accessToken);
+        $response = $this->hubSpot->getDeals($userId, $tokenManager);
 
         if (!isset($response['results'])) {
             logger()->error('Deal sync failed', ['response' => $response]);
@@ -24,10 +32,15 @@ class DealService
         }
 
         foreach ($response['results'] as $item) {
-            $props = $item['properties'];
+            $props = $item['properties'] ?? [];
 
-            $pipeline = Pipeline::where('label_key', $props['pipeline'] ?? null)->first();
-            $stage = Stage::where('label_key', $props['dealstage'] ?? null)->first();
+            $pipeline = !empty($props['pipeline'])
+                ? Pipeline::where('label_key', $props['pipeline'])->first()
+                : null;
+
+            $stage = !empty($props['dealstage'])
+                ? Stage::where('label_key', $props['dealstage'])->first()
+                : null;
 
             Deal::updateOrCreate(
                 ['hubspot_id' => $item['id']],
@@ -40,35 +53,33 @@ class DealService
             );
         }
 
-        return json(['pipeline' => $pipeline, 'stage' => $stage]);
+        return true;
     }
 
-
-    public function createDeal(array $data, string $accessToken): array
+    /**
+     * Create a new deal in HubSpot.
+     *
+     * @param int $userId
+     * @param HubSpotTokenManager $tokenManager
+     * @param array $data
+     * @return array
+     */
+    public function createDeal(int $userId, HubSpotTokenManager $tokenManager, array $data): array
     {
-        $response = Http::withToken($accessToken)
-            ->post('https://api.hubapi.com/crm/v3/objects/deals', [
-                'properties' => $data,
-            ]);
-
-        if ($response->failed()) {
-            throw new \Exception('Error creating deal: ' . $response->body());
-        }
-
-        return $response->json();
+        return $this->hubSpot->createDeal($userId, $tokenManager, $data);
     }
 
-    public function updateDeal(string $dealId, array $data, string $accessToken): array
+    /**
+     * Update an existing deal in HubSpot.
+     *
+     * @param int $userId
+     * @param HubSpotTokenManager $tokenManager
+     * @param string $dealId
+     * @param array $data
+     * @return array
+     */
+    public function updateDeal(int $userId, HubSpotTokenManager $tokenManager, string $dealId, array $data): array
     {
-        $response = Http::withToken($accessToken)
-            ->patch("https://api.hubapi.com/crm/v3/objects/deals/{$dealId}", [
-                'properties' => $data,
-            ]);
-
-        if ($response->failed()) {
-            throw new \Exception('Error updating deal: ' . $response->body());
-        }
-
-        return $response->json();
+        return $this->hubSpot->updateDeal($userId, $tokenManager, $dealId, $data);
     }
 }

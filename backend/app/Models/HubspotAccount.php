@@ -15,17 +15,22 @@ class HubspotAccount extends Model
         'refresh_token',
         'expires_at',
         'hubspot_user_id',
+        'scopes',
     ];
+
     protected $casts = [
         'scopes' => 'array',
         'expires_at' => 'datetime',
     ];
-
-    protected $dates = ['expires_at'];
 
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
+    public function isExpired(): bool
+    {
+        // Add a 5-minute buffer to avoid edge cases
+        return now()->greaterThan($this->expires_at->subMinutes(5));
+    }
 }

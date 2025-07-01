@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\HubSpot;
 
 use App\Models\Contact;
@@ -12,9 +13,16 @@ class ContactService
         $this->hubSpot = $hubSpot;
     }
 
-    public function sync(string $accessToken): bool
+    /**
+     * Sync contacts from HubSpot.
+     *
+     * @param int $userId
+     * @param HubSpotTokenManager $tokenManager
+     * @return bool
+     */
+    public function sync(int $userId, HubSpotTokenManager $tokenManager): bool
     {
-        $response = $this->hubSpot->getContactsWithDetails($accessToken);
+        $response = $this->hubSpot->getContactsWithDetails($userId, $tokenManager);
 
         if (!isset($response['results'])) {
             logger()->error('Contact sync failed', ['response' => $response]);
@@ -22,7 +30,7 @@ class ContactService
         }
 
         foreach ($response['results'] as $item) {
-            $props = $item['properties'];
+            $props = $item['properties'] ?? [];
 
             Contact::updateOrCreate(
                 ['hubspot_id' => $item['id']],

@@ -11,6 +11,8 @@ use App\Services\Hubspot\PipelineService;
 use App\Services\Hubspot\DealService;
 use App\Services\Hubspot\ContactService;
 use App\Services\Hubspot\CompanyService;
+use App\Services\Hubspot\HubspotTokenManager;
+
 class HubSpotController extends Controller
 {
     protected HubSpotService $hubspot;
@@ -116,25 +118,28 @@ class HubSpotController extends Controller
     }
 
 
+     /**
+     * Sync all HubSpot data
+     */
     public function sync(
         PipelineService $pipelineService,
         DealService $dealService,
         ContactService $contactService,
-        CompanyService $companyService
+        CompanyService $companyService,
+        HubSpotTokenManager $tokenManager
     ) {
         $user = auth()->user();
         $account = $user->hubspotAccount;
 
-        if (!$account || !$account->access_token) {
+        if (!$account) {
             return response()->json(['error' => 'No connected HubSpot account'], 400);
         }
 
-        $accessToken = $account->access_token;
-
-        $pipelineService->sync($accessToken);
-        $dealService->sync($accessToken);
-        $contactService->sync($accessToken);
-        $companyService->sync($accessToken);
+        // ✅ You no longer pass tokens manually
+        $pipelineService->sync($user->id, $tokenManager);
+        $dealService->sync($user->id, $tokenManager);
+        $contactService->sync($user->id, $tokenManager);
+        $companyService->sync($user->id, $tokenManager);
 
         return response()->json(['message' => 'HubSpot data synced successfully']);
     }

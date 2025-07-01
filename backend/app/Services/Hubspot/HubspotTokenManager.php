@@ -1,31 +1,31 @@
 <?php
-// app/Services/Hubspot/HubSpotTokenManager.php
 
 namespace App\Services\Hubspot;
 
 use App\Models\HubspotAccount;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
 
 class HubSpotTokenManager
 {
     protected HubSpotService $hubspotService;
 
-    public function __construct()
+    public function __construct(HubSpotService $hubspotService)
     {
-        $this->hubspotService = new HubSpotService(); // optional: inject if needed
+        $this->hubspotService = $hubspotService;
     }
 
     /**
-     * Get a valid access token for the given user.
+     * Get a valid access token for a given user.
      */
     public function getAccessToken(int $userId): string
     {
         $account = HubspotAccount::where('user_id', $userId)->firstOrFail();
 
-        // Check if token is expired
-        if (now()->greaterThan($account->expires_at)) {
+        if (empty($account->refresh_token)) {
+            throw new \Exception('No refresh token available for this account.');
+        }
+
+        if ($account->isExpired()) {
             $account = $this->refreshToken($account);
         }
 
@@ -33,7 +33,7 @@ class HubSpotTokenManager
     }
 
     /**
-     * Refresh the access token using HubSpot's refresh_token flow.
+     * Refresh the access token.
      */
     public function refreshToken(HubspotAccount $account): HubspotAccount
     {
@@ -54,7 +54,7 @@ class HubSpotTokenManager
     }
 
     /**
-     * Save the initial token set after first authorization.
+     * Store the initial tokens after authorization.
      */
     public function storeInitialTokens(int $userId, array $tokens): HubspotAccount
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\HubSpot;
 
 use App\Models\Company;
@@ -12,9 +13,12 @@ class CompanyService
         $this->hubSpot = $hubSpot;
     }
 
-    public function sync(string $accessToken): bool
+    public function sync(int $userId, HubSpotTokenManager $tokenManager): bool
     {
-        $response = $this->hubSpot->getCompanies($accessToken);
+        // Get a fresh token (refreshing if expired)
+        $token = $tokenManager->getAccessToken($userId);
+
+        $response = $this->hubSpot->getCompanies($userId, $tokenManager);
 
         if (!isset($response['results'])) {
             logger()->error('Company sync failed', ['response' => $response]);
@@ -22,7 +26,7 @@ class CompanyService
         }
 
         foreach ($response['results'] as $item) {
-            $props = $item['properties'];
+            $props = $item['properties'] ?? [];
 
             Company::updateOrCreate(
                 ['hubspot_id' => $item['id']],
