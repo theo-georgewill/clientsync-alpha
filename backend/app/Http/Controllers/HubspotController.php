@@ -98,7 +98,6 @@ class HubSpotController extends Controller
         return response()->json([
             'connected' => true,
             'last_synced' => $account->updated_at->toDateTimeString(),
-
         ]);
     }
 

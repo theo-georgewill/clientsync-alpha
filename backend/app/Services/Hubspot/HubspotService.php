@@ -22,7 +22,7 @@ class HubSpotService
         $query = http_build_query([
             'client_id' => $this->clientId,
             'redirect_uri' => $this->redirectUri,
-            'scope' => 'oauth crm.objects.contacts.read crm.objects.contacts.write',
+            'scope' => 'oauth crm.objects.contacts.read crm.objects.contacts.write crm.objects.deals.read crm.objects.deals.write',
             'response_type' => 'code',
         ]);
 

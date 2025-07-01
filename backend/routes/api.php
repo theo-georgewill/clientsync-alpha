@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HubSpotController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DealController;
+use App\Http\Controllers\PipelineController;
 use App\Models\User;
 
 // Login
@@ -28,7 +29,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/hubspot/callback', [HubSpotController::class, 'handleCallback']);
     Route::post('/hubspot/sync', [HubSpotController::class, 'sync']);
 
-    //Deal protected route
+
+    // ✅ Pipelines with stages
+    Route::get('/pipelines', [PipelineController::class, 'index']);
+
+    // ✅ Deals list (with pipeline & stage)
+    Route::get('/deals', [DealController::class, 'index']);
+    
+    //Create deal protected route
     Route::post('/deals', [DealController::class, 'store']);
+
+    // ✅ Update deal stage (for drag & drop)
+    Route::patch('/deals/{id}', [DealController::class, 'update']);
 });
 

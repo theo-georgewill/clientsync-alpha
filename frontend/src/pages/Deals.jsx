@@ -1,130 +1,98 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Board, { moveCard } from "@lourenci/react-kanban";
 import "@lourenci/react-kanban/dist/styles.css";
-
-const board = {
-  columns: [
-    {
-      id: 1,
-      title: "Backlog",
-      backgroundColor: "#fff",
-      cards: [
-        {
-          id: 1,
-          title: "Card title 1",
-          description: "Card content"
-        },
-        {
-          id: 2,
-          title: "Card title 2",
-          description: "Card content"
-        },
-        {
-          id: 3,
-          title: "Card title 3",
-          description: "Card content"
-        }
-      ]
-    },
-    {
-      id: 2,
-      title: "Doing",
-      cards: [
-        {
-          id: 9,
-          title: "Card title 9",
-          description: "Card content"
-        }
-      ]
-    },
-    {
-      id: 3,
-      title: "Q&A",
-      cards: [
-        {
-          id: 10,
-          title: "Card title 10",
-          description: "Card content"
-        },
-        {
-          id: 11,
-          title: "Card title 11",
-          description: "Card content"
-        }
-      ]
-    },
-    {
-      id: 4,
-      title: "Production",
-      cards: [
-        {
-          id: 12,
-          title: "Card title 12",
-          description: "Card content"
-        },
-        {
-          id: 13,
-          title: "Card title 13",
-          description: "Card content"
-        }
-      ]
-    }
-  ]
-};
-
-const items = [];
-
-function ControlledBoard() {
-  // You need to control the state yourself.
-  const [controlledBoard, setBoard] = useState(board);
-
-  function handleCardMove(_card, source, destination) {
-    const updatedBoard = moveCard(controlledBoard, source, destination);
-    setBoard(updatedBoard);
-  }
-
-  return (
-    <Board onCardDragEnd={handleCardMove} disableColumnDrag>
-      {controlledBoard}
-    </Board>
-  );
-}
-
-function UncontrolledBoard() {
-  return (
-    <Board
-      allowRemoveLane
-      allowRenameColumn
-      allowRemoveCard
-      onLaneRemove={console.log}
-      onCardRemove={console.log}
-      onLaneRename={console.log}
-      initialBoard={board}
-      allowAddCard={{ on: "top" }}
-      onNewCardConfirm={(draftCard) => ({
-        id: new Date().getTime(),
-        ...draftCard
-      })}
-      onCardNew={console.log}
-    />
-  );
-}
+import { useDispatch, useSelector } from "react-redux";
+import { fetchPipelines } from "@/store/slices/pipelineSlice";
+import { fetchDeals, updateDealStage } from "@/store/slices/dealSlice";
+import api from "@/services/api"; // Make sure this points to your Axios wrapper
 
 export default function Deals() {
+  const dispatch = useDispatch();
+  const { pipelines } = useSelector((state) => state.pipelines);
+  const { deals } = useSelector((state) => state.deals);
+
+  const [board, setBoard] = useState({ columns: [] });
+  const [syncing, setSyncing] = useState(false);
+
+  // Load on mount
+  useEffect(() => {
+    dispatch(fetchPipelines());
+    dispatch(fetchDeals());
+  }, [dispatch]);
+
+  // Rebuild board when pipelines or deals change
+  useEffect(() => {
+    const columns = [];
+
+    pipelines.forEach((pipeline) => {
+      pipeline.stages.forEach((stage) => {
+        const cards = deals
+          .filter((deal) => deal.stage?.id === stage.id)
+          .map((deal) => ({
+            id: deal.id,
+            title: deal.dealname,
+            description: deal.amount ? `$${deal.amount}` : "No amount",
+            stageId: stage.id,
+          }));
+
+        columns.push({
+          id: stage.id,
+          title: `${pipeline.label}: ${stage.label}`,
+          cards,
+        });
+      });
+    });
+
+    setBoard({ columns });
+  }, [pipelines, deals]);
+
+  // Sync handler
+  const handleSyncNow = async () => {
+    try {
+      setSyncing(true);
+      await api.post("/api/hubspot/sync");
+      await dispatch(fetchPipelines());
+      await dispatch(fetchDeals());
+    } catch (err) {
+      console.error("Sync failed", err);
+      alert("Failed to sync. Check console or logs.");
+    } finally {
+      setSyncing(false);
+    }
+  };
+
+  // Handle card movement
+  const handleCardMove = async (card, source, destination) => {
+    const updatedBoard = moveCard(board, source, destination);
+    setBoard(updatedBoard);
+
+    if (source.fromColumnId !== destination.toColumnId) {
+      try {
+        await dispatch(
+          updateDealStage({ id: card.id, stage_id: destination.toColumnId })
+        );
+      } catch (err) {
+        console.error("Failed to update deal stage", err);
+      }
+    }
+  };
+
   return (
     <>
-      {items.length && <div />}
-      
-      <h4>Example of an uncontrolled board</h4>
-      <UncontrolledBoard />
-      <h4>Example of a controlled board</h4>
-      <p>Just the card moving is implemented in this demo.</p>
-      <p>
-        In this kind of board, you can do whatever you want. We just mirror your
-        board state.
-      </p>
-      <ControlledBoard />
+      <div className="flex items-center justify-between mb-4">
+        <h4 className="text-xl font-semibold">Deals Board</h4>
+        <button
+          onClick={handleSyncNow}
+          disabled={syncing}
+          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+        >
+          {syncing ? "Syncing..." : "Sync Now"}
+        </button>
+      </div>
+
+      <Board onCardDragEnd={handleCardMove} disableColumnDrag>
+        {board}
+      </Board>
     </>
   );
 }
-

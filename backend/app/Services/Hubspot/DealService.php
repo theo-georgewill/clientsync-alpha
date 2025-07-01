@@ -40,7 +40,7 @@ class DealService
             );
         }
 
-        return true;
+        return json(['pipeline' => $pipeline, 'stage' => $stage]);
     }
 
 
