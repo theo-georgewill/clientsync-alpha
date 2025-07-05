@@ -46,9 +46,9 @@ class DealService
                 ['hubspot_id' => $item['id']],
                 [
                     'dealname' => $props['dealname'] ?? null,
-                    'amount' => $props['amount'] ?? null,
                     'pipeline_id' => $pipeline?->id,
                     'stage_id' => $stage?->id,
+                    'amount' => $props['amount'] ?? null,
                 ]
             );
         }

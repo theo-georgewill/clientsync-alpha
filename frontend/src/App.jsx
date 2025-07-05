@@ -54,7 +54,7 @@ export default function App() {
 				</Route>
 
 				{/* Main layout */}
-				<Route element={<RequireAuth><Main /></RequireAuth>}>
+				<Route element={<RequireAuth> <Main /> </RequireAuth>}>
 					<Route path="/" element={<Dashboard />} />
 					<Route path="/integrations" element={<Integrations />} />
 					<Route path="/integrations/hubspot/callback" element={<HubSpotCallback />} /> 

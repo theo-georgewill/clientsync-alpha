@@ -4,7 +4,7 @@ import "@lourenci/react-kanban/dist/styles.css";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPipelines } from "@/store/slices/pipelineSlice";
 import { fetchDeals, updateDealStage } from "@/store/slices/dealSlice";
-import api from "@/services/api"; // Make sure this points to your Axios wrapper
+import api from "@/services/api"; // Axios wrapper
 
 export default function Deals() {
 	const dispatch = useDispatch();
@@ -14,13 +14,13 @@ export default function Deals() {
 	const [board, setBoard] = useState({ columns: [] });
 	const [syncing, setSyncing] = useState(false);
 
-	// Load on mount
+	// Load pipelines + deals on mount
 	useEffect(() => {
 		dispatch(fetchPipelines());
 		dispatch(fetchDeals());
 	}, [dispatch]);
 
-	// Rebuild board when pipelines or deals change
+	// Rebuild board whenever pipelines or deals change
 	useEffect(() => {
 		const columns = [];
 
@@ -37,7 +37,16 @@ export default function Deals() {
 
 				columns.push({
 					id: stage.id,
-					title: `${pipeline.label}: ${stage.label}`,
+					title: (
+						<div className="flex flex-col">
+							<span className="font-semibold text-sm">
+								{pipeline.label}: {stage.label}
+							</span>
+							<span className="text-xs text-gray-500">
+								{cards.length} deal{cards.length !== 1 ? "s" : ""}
+							</span>
+						</div>
+					),
 					cards,
 				});
 			});
@@ -46,7 +55,7 @@ export default function Deals() {
 		setBoard({ columns });
 	}, [pipelines, deals]);
 
-	// Sync handler
+	// Sync data manually
 	const handleSyncNow = async () => {
 		try {
 			setSyncing(true);
@@ -61,7 +70,7 @@ export default function Deals() {
 		}
 	};
 
-	// Handle card movement
+	// Drag card to new column = update deal stage
 	const handleCardMove = async (card, source, destination) => {
 		const updatedBoard = moveCard(board, source, destination);
 		setBoard(updatedBoard);
@@ -77,6 +86,12 @@ export default function Deals() {
 		}
 	};
 
+	// Handle card click (open modal soon)
+	const handleCardClick = (card) => {
+		console.log("Clicked deal:", card);
+		// TODO: Open deal modal with full info
+	};
+
 	return (
 		<>
 			<div className="flex items-center justify-between mb-4">
@@ -90,12 +105,30 @@ export default function Deals() {
 				</button>
 			</div>
 
-			<div className="w-100 overflow-auto">
-				<Board onCardDragEnd={handleCardMove} disableColumnDrag>
-					{board}
-				</Board>
+			{/* Horizontal Scroll Container */}
+			<div
+				className="w-100 overflow-x-auto pb-4"
+				style={{ whiteSpace: "nowrap" }}
+			>
+				<div style={{ minWidth: "max-content" }}>
+					<Board
+						onCardDragEnd={handleCardMove}
+						disableColumnDrag
+						renderCard={(card) => (
+							<div
+								onClick={() => handleCardClick(card)}
+								style={{ cursor: "pointer" }}
+								className="p-2 border rounded bg-white shadow-sm hover:bg-gray-100"
+							>
+								<h5 className="text-sm font-semibold">{card.title}</h5>
+								<p className="text-xs text-gray-500">{card.description}</p>
+							</div>
+						)}
+					>
+						{board}
+					</Board>
+				</div>
 			</div>
-
 		</>
 	);
 }

@@ -9,7 +9,7 @@ export default function MainLayout() {
     <Navbar />
     <div className="d-flex">
       <Sidebar />
-      <div className="flex-grow container-fluid">
+      <div className="flex-grow container">
         
         <main className="p-4 ">
           <Outlet />
