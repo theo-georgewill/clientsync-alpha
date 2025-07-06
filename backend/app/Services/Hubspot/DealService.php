@@ -34,21 +34,28 @@ class DealService
         foreach ($response['results'] as $item) {
             $props = $item['properties'] ?? [];
 
-            $pipeline = !empty($props['pipeline'])
-                ? Pipeline::where('label_key', $props['pipeline'])->first()
+            $pipelineId = $props['pipeline'] ?? null;
+            $stageId = $props['dealstage'] ?? null;
+
+            $pipeline = $pipelineId
+                ? Pipeline::where('label_key', $pipelineId)->first()
                 : null;
 
-            $stage = !empty($props['dealstage'])
-                ? Stage::where('label_key', $props['dealstage'])->first()
+            $stage = $stageId
+                ? Stage::where('label_key', $stageId)->first()
                 : null;
 
             Deal::updateOrCreate(
                 ['hubspot_id' => $item['id']],
                 [
-                    'dealname' => $props['dealname'] ?? null,
-                    'pipeline_id' => $pipeline?->id,
-                    'stage_id' => $stage?->id,
-                    'amount' => $props['amount'] ?? null,
+                    'dealname'     => $props['dealname'] ?? null,
+                    'amount'       => $props['amount'] ?? null,
+
+                    'pipeline_id'  => $pipelineId,
+                    'pipeline'     => $pipeline?->label ?? null,
+
+                    'stage_id'     => $stageId,
+                    'stage'        => $stage?->label ?? null,
                 ]
             );
         }

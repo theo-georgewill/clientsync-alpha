@@ -9,6 +9,7 @@ class Company extends Model
     use HasFactory;
 
     protected $fillable = [
+        'hubspot_account_id',
         'hubspot_id',
         'name',
         'domain',

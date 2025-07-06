@@ -9,6 +9,7 @@ class Contact extends Model
     use HasFactory;
 
     protected $fillable = [
+        'hubspot_account_id',
         'hubspot_id',
         'email',
         'firstname',

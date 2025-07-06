@@ -9,6 +9,7 @@ class Deal extends Model
     use HasFactory;
 
     protected $fillable = [
+        'hubspot_account_id',
         'hubspot_id',
         'dealname',
         'pipeline_id',

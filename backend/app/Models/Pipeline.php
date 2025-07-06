@@ -10,6 +10,7 @@ class Pipeline extends Model
     use HasFactory;
 
     protected $fillable = [
+        'hubspot_account_id',
         'hubspot_id',
         'label',
         'label_key',
