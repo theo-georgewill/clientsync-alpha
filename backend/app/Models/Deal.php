@@ -12,7 +12,9 @@ class Deal extends Model
         'hubspot_id',
         'dealname',
         'pipeline_id',
+        'pipeline',
         'stage_id',
+        'stage',
         'amount',
     ];
 

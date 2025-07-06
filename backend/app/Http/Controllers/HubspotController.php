@@ -135,7 +135,6 @@ class HubSpotController extends Controller
             return response()->json(['error' => 'No connected HubSpot account'], 400);
         }
 
-        // ✅ You no longer pass tokens manually
         $pipelineService->sync($user->id, $tokenManager);
         $dealService->sync($user->id, $tokenManager);
         $contactService->sync($user->id, $tokenManager);
