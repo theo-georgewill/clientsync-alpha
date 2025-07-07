@@ -74,9 +74,9 @@ class HubSpotService
     /**
      * Get contacts list.
      */
-    public function getContacts(int $userId, HubSpotTokenManager $tokenManager): array
+    public function getContacts(HubspotAccount $account, HubSpotTokenManager $tokenManager): array
     {
-        $token = $tokenManager->getAccessToken($userId);
+        $token = $tokenManager->getAccessTokenFromAccount($account);
 
         return Http::withToken($token)
             ->get('https://api.hubapi.com/crm/v3/objects/contacts')
@@ -86,9 +86,9 @@ class HubSpotService
     /**
      * Get contacts with details.
      */
-    public function getContactsWithDetails(int $userId, HubSpotTokenManager $tokenManager): array
+    public function getContactsWithDetails(HubspotAccount $account, HubSpotTokenManager $tokenManager): array
     {
-        $token = $tokenManager->getAccessToken($userId);
+        $token = $tokenManager->getAccessTokenFromAccount($account);
 
         return Http::withToken($token)
             ->get('https://api.hubapi.com/crm/v3/objects/contacts?properties=email,firstname,lastname&limit=100')
@@ -110,9 +110,9 @@ class HubSpotService
     /**
      * Get pipelines.
      */
-    public function getPipelines(int $userId, HubSpotTokenManager $tokenManager): array
+    public function getPipelines(HubspotAccount $account, HubSpotTokenManager $tokenManager): array
     {
-        $token = $tokenManager->getAccessToken($userId);
+        $token = $tokenManager->getAccessTokenFromAccount($account);
 
         return Http::withToken($token)
             ->get('https://api.hubapi.com/crm/v3/pipelines/deals')
@@ -122,9 +122,9 @@ class HubSpotService
     /**
      * Get companies.
      */
-    public function getCompanies(int $userId, HubSpotTokenManager $tokenManager): array
+    public function getCompanies(HubspotAccount $account, HubSpotTokenManager $tokenManager): array
     {
-        $token = $tokenManager->getAccessToken($userId);
+        $token = $tokenManager->getAccessTokenFromAccount($account);
 
         return Http::withToken($token)
             ->get('https://api.hubapi.com/crm/v3/objects/companies?properties=name,domain&limit=100')
