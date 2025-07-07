@@ -28,7 +28,7 @@ class PipelineService
 
         foreach ($response['results'] as $pipe) {
             $pipeline = Pipeline::updateOrCreate(
-                ['hubspot_id' => $pipe['id']],
+                ['pipeline_id' => $pipe['id']],
                 [
                     'label' => $pipe['label'],
                     'label_key' => $pipe['labelKey'] ?? null, // Avoid undefined index
@@ -37,7 +37,7 @@ class PipelineService
 
             foreach ($pipe['stages'] as $stage) {
                 $pipeline->stages()->updateOrCreate(
-                    ['hubspot_id' => $stage['id']],
+                    ['stage_id' => $stage['id']],
                     [
                         'label' => $stage['label'],
                         'label_key' => $stage['labelKey'] ?? null, // Avoid undefined index

@@ -29,7 +29,7 @@ class CompanyService
             $props = $item['properties'] ?? [];
 
             Company::updateOrCreate(
-                ['hubspot_id' => $item['id']],
+                ['company_id' => $item['id']],
                 [
                     'name' => $props['name'] ?? null,
                     'domain' => $props['domain'] ?? null,

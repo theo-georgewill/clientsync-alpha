@@ -33,7 +33,7 @@ class ContactService
             $props = $item['properties'] ?? [];
 
             Contact::updateOrCreate(
-                ['hubspot_id' => $item['id']],
+                ['contact_id' => $item['id']],
                 [
                     'email' => $props['email'] ?? null,
                     'firstname' => $props['firstname'] ?? null,

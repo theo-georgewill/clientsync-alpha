@@ -46,7 +46,7 @@ class DealService
                 : null;
 
             Deal::updateOrCreate(
-                ['hubspot_id' => $item['id']],
+                ['deal_id' => $item['id']],
                 [
                     'dealname'     => $props['dealname'] ?? null,
                     'amount'       => $props['amount'] ?? null,
