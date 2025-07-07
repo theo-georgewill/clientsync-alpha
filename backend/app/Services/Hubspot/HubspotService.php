@@ -4,6 +4,7 @@ namespace App\Services\Hubspot;
 
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Models\HubspotAccount;
 
 class HubSpotService
 {
@@ -97,9 +98,9 @@ class HubSpotService
     /**
      * Get deals.
      */
-    public function getDeals(int $userId, HubSpotTokenManager $tokenManager): array
+    public function getDeals(HubspotAccount $account, HubSpotTokenManager $tokenManager): array
     {
-        $token = $tokenManager->getAccessToken($userId);
+        $token = $tokenManager->getAccessTokenFromAccount($account);
 
         return Http::withToken($token)
             ->get('https://api.hubapi.com/crm/v3/objects/deals?properties=dealname,amount,pipeline,dealstage&limit=100')

@@ -5,6 +5,8 @@ namespace App\Services\HubSpot;
 use App\Models\Deal;
 use App\Models\Pipeline;
 use App\Models\Stage;
+use App\Models\HubspotAccount;
+//use App\Services\HubSpot\HubSpotTokenManager;
 
 class DealService
 {
@@ -18,13 +20,13 @@ class DealService
     /**
      * Sync deals from HubSpot.
      *
-     * @param int $userId
+     * @param HubspotAccount $account
      * @param HubSpotTokenManager $tokenManager
      * @return bool
      */
-    public function sync(int $userId, HubSpotTokenManager $tokenManager): bool
+    public function sync(HubspotAccount $account, HubSpotTokenManager $tokenManager): bool
     {
-        $response = $this->hubSpot->getDeals($userId, $tokenManager);
+        $response = $this->hubSpot->getDeals($account, $tokenManager);
 
         if (!isset($response['results'])) {
             logger()->error('Deal sync failed', ['response' => $response]);
@@ -38,15 +40,18 @@ class DealService
             $stageId = $props['dealstage'] ?? null;
 
             $pipeline = $pipelineId
-                ? Pipeline::where('label_key', $pipelineId)->first()
+                ? Pipeline::where('pipeline_id', $pipelineId)->first()
                 : null;
 
             $stage = $stageId
-                ? Stage::where('label_key', $stageId)->first()
+                ? Stage::where('stage_id', $stageId)->first()
                 : null;
 
             Deal::updateOrCreate(
-                ['deal_id' => $item['id']],
+                [
+                    'hubspot_account_id' => $account->id,
+                    'deal_id' => $item['id']
+                ],
                 [
                     'dealname'     => $props['dealname'] ?? null,
                     'amount'       => $props['amount'] ?? null,

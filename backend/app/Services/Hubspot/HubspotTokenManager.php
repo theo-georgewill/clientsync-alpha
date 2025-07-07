@@ -13,6 +13,22 @@ class HubSpotTokenManager
     {
         $this->hubspotService = $hubspotService;
     }
+    /**
+     * Get a valid access token for a given HubSpot account.
+     */
+    public function getAccessTokenFromAccount(HubspotAccount $account): string
+    {
+        if (empty($account->refresh_token)) {
+            throw new \Exception('No refresh token available for this HubSpot account.');
+        }
+
+        if ($account->isExpired()) {
+            $account = $this->refreshToken($account);
+        }
+
+        return $account->access_token;
+    }
+
 
     /**
      * Get a valid access token for a given user.
