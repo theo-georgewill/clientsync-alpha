@@ -10,7 +10,7 @@ class Contact extends Model
 
     protected $fillable = [
         'hubspot_account_id',
-        'hubspot_id',
+        'contact_id',
         'email',
         'firstname',
         'lastname',

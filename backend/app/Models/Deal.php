@@ -10,7 +10,7 @@ class Deal extends Model
 
     protected $fillable = [
         'hubspot_account_id',
-        'hubspot_id',
+        'deal_id',
         'dealname',
         'pipeline_id',
         'pipeline',

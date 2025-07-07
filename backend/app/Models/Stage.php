@@ -10,7 +10,7 @@ class Stage extends Model
 
     protected $fillable = [
         'hubspot_account_id',
-        'hubspot_id',
+        'stage_id',
         'pipeline_id',
         'label',
         'label_key',

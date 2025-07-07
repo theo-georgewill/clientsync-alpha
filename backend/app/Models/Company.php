@@ -10,7 +10,7 @@ class Company extends Model
 
     protected $fillable = [
         'hubspot_account_id',
-        'hubspot_id',
+        'company_id',
         'name',
         'domain',
     ];
