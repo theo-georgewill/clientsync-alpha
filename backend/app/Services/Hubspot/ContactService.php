@@ -3,7 +3,7 @@
 namespace App\Services\HubSpot;
 
 use App\Models\Contact;
-
+use App\Models\HubspotAccount;
 class ContactService
 {
     protected HubSpotService $hubSpot;
@@ -20,9 +20,9 @@ class ContactService
      * @param HubSpotTokenManager $tokenManager
      * @return bool
      */
-    public function sync(int $userId, HubSpotTokenManager $tokenManager): bool
+    public function sync(HubspotAccount $account, HubSpotTokenManager $tokenManager): bool
     {
-        $response = $this->hubSpot->getContactsWithDetails($userId, $tokenManager);
+        $response = $this->hubSpot->getContactsWithDetails($account, $tokenManager);
 
         if (!isset($response['results'])) {
             logger()->error('Contact sync failed', ['response' => $response]);

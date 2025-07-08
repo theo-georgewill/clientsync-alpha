@@ -138,7 +138,7 @@ class HubSpotController extends Controller
         $pipelineService->sync($account, $tokenManager);
         $dealService->sync($account, $tokenManager);
         $contactService->sync($account, $tokenManager);
-        $companyService->sync($user->id, $tokenManager);
+        $companyService->sync($account, $tokenManager);
 
         return response()->json(['message' => 'HubSpot data synced successfully']);
     }

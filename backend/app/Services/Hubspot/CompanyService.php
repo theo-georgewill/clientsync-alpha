@@ -3,6 +3,7 @@
 namespace App\Services\HubSpot;
 
 use App\Models\Company;
+use App\Models\HubspotAccount;
 
 class CompanyService
 {
@@ -13,12 +14,12 @@ class CompanyService
         $this->hubSpot = $hubSpot;
     }
 
-    public function sync(int $userId, HubSpotTokenManager $tokenManager): bool
+    public function sync(HubspotAccount $account, HubSpotTokenManager $tokenManager): bool
     {
         // Get a fresh token (refreshing if expired)
-        $token = $tokenManager->getAccessToken($userId);
+        $token = $tokenManager->getAccessTokenFromAccount($account);
 
-        $response = $this->hubSpot->getCompanies($userId, $tokenManager);
+        $response = $this->hubSpot->getCompanies($account, $tokenManager);
 
         if (!isset($response['results'])) {
             logger()->error('Company sync failed', ['response' => $response]);
