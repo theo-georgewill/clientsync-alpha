@@ -41,10 +41,7 @@ class PipelineService
 
             foreach ($pipe['stages'] as $stage) {
                 $pipeline->stages()->updateOrCreate(
-                    [
-                        'hubspot_account_id' => $account->id,
-                        'stage_id' => $stage['id']
-                    ],
+                    ['stage_id' => $stage['id']],
                     [
                         'label' => $stage['label'],
                         'label_key' => $stage['labelKey'] ?? null, // Avoid undefined index

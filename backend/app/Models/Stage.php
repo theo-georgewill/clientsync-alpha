@@ -9,7 +9,6 @@ class Stage extends Model
     use HasFactory;
 
     protected $fillable = [
-        'hubspot_account_id',
         'stage_id',
         'pipeline_id',
         'label',
