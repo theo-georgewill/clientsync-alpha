@@ -13,9 +13,9 @@ class Deal extends Model
         'deal_id',
         'dealname',
         'pipeline_id',
-        'pipeline',
+        'pipeline_label',
         'stage_id',
-        'stage',
+        'stage_label',
         'amount',
     ];
 

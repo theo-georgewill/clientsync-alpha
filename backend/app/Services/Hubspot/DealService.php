@@ -57,10 +57,10 @@ class DealService
                     'amount'       => $props['amount'] ?? null,
 
                     'pipeline_id'  => $pipelineId,
-                    'pipeline'     => $pipeline?->label ?? null,
+                    'pipeline_label'     => $pipeline?->label ?? null,
 
                     'stage_id'     => $stageId,
-                    'stage'        => $stage?->label ?? null,
+                    'stage_label'        => $stage?->label ?? null,
                 ]
             );
         }
