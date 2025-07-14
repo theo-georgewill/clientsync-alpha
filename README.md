@@ -32,8 +32,9 @@
 ```bash
 git clone https://github.com/theo-georgewill/clientsync-alpha.git
 cd clientsync-alpha
-Set up the backend (Laravel)
 ```
+
+2. Set up the backend (Laravel)
 
 ```bash
 cd backend
@@ -41,39 +42,32 @@ cp .env.example .env
 composer install
 php artisan key:generate
 php artisan migrate
-Set up the frontend (React)
 ```
 
+3. Set up the frontend (React)
 ```bash
 cd ../frontend
 npm install
 npm run dev
 ```
-Configure your .env with your HubSpot credentials:
-
-
-dotenv
-```bash
+4. Configure your .env with your HubSpot credentials:
+```dotenv
 HUBSPOT_CLIENT_ID=your-client-id
 HUBSPOT_CLIENT_SECRET=your-client-secret
 HUBSPOT_REDIRECT_URI=http://localhost:8000/hubspot/callback
+```
 📬 Webhook Endpoint
 Use this URL to configure HubSpot webhooks:
-```
-
-ruby
-Copy
-Edit
+```bash ruby
 https://yourdomain.com/api/webhook/hubspot
 🧩 Folder Structure
-Copy
-Edit
 clientsync-alpha/
 ├── backend/ (Laravel)
 ├── frontend/ (React + Vite)
 ├── README.md
-📖 Learning Objectives
 ```
+📖 Learning Objectives
+
 Integrate HubSpot CRM with custom Laravel backend
 
 Build scalable full-stack systems
