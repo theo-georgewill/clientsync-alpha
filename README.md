@@ -33,8 +33,9 @@
 git clone https://github.com/theo-georgewill/clientsync-alpha.git
 cd clientsync-alpha
 Set up the backend (Laravel)
+```
 
-bash
+```bash
 Copy
 Edit
 cd backend
@@ -44,7 +45,7 @@ php artisan key:generate
 php artisan migrate
 Set up the frontend (React)
 
-bash
+```bash
 Copy
 Edit
 cd ../frontend
