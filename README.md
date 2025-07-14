@@ -58,7 +58,7 @@ HUBSPOT_REDIRECT_URI=http://localhost:8000/hubspot/callback
 ```
 📬 Webhook Endpoint
 Use this URL to configure HubSpot webhooks:
-```bash ruby
+```ruby
 https://yourdomain.com/api/webhook/hubspot
 🧩 Folder Structure
 clientsync-alpha/
