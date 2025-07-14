@@ -36,8 +36,6 @@ Set up the backend (Laravel)
 ```
 
 ```bash
-Copy
-Edit
 cd backend
 cp .env.example .env
 composer install
@@ -47,21 +45,21 @@ Set up the frontend (React)
 ```
 
 ```bash
-Copy
-Edit
 cd ../frontend
 npm install
 npm run dev
+```
 Configure your .env with your HubSpot credentials:
 
+
 dotenv
-Copy
-Edit
+```bash
 HUBSPOT_CLIENT_ID=your-client-id
 HUBSPOT_CLIENT_SECRET=your-client-secret
 HUBSPOT_REDIRECT_URI=http://localhost:8000/hubspot/callback
 📬 Webhook Endpoint
 Use this URL to configure HubSpot webhooks:
+```
 
 ruby
 Copy
