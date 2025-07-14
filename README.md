@@ -44,6 +44,7 @@ composer install
 php artisan key:generate
 php artisan migrate
 Set up the frontend (React)
+```
 
 ```bash
 Copy
@@ -74,6 +75,7 @@ clientsync-alpha/
 ├── frontend/ (React + Vite)
 ├── README.md
 📖 Learning Objectives
+```
 Integrate HubSpot CRM with custom Laravel backend
 
 Build scalable full-stack systems
