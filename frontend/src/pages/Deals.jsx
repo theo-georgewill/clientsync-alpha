@@ -27,16 +27,16 @@ export default function Deals() {
 		pipelines.forEach((pipeline) => {
 			pipeline.stages.forEach((stage) => {
 				const cards = deals
-					.filter((deal) => deal.stage?.id === stage.id)
+					.filter((deal) => deal.stage_id === stage.stage_id)
 					.map((deal) => ({
 						id: deal.id,
 						title: deal.dealname,
 						description: deal.amount ? `$${deal.amount}` : "No amount",
-						stageId: stage.id,
+						stageId: deal.stage_id,
 					}));
 
 				columns.push({
-					id: stage.id,
+					id: stage.stage_id,
 					title: (
 						<div className="flex flex-col">
 							<span className="font-semibold text-sm">

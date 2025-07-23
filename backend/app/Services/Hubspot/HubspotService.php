@@ -154,9 +154,9 @@ class HubSpotService
     /**
      * Update an existing deal.
      */
-    public function updateDeal(int $userId, HubSpotTokenManager $tokenManager, string $dealId, array $data): array
+    public function updateDeal(HubspotAccount $account, HubSpotTokenManager $tokenManager, string $dealId, array $data): array
     {
-        $token = $tokenManager->getAccessToken($userId);
+        $token = $tokenManager->getAccessTokenFromAccount($account);
 
         $response = Http::withToken($token)
             ->patch("https://api.hubapi.com/crm/v3/objects/deals/{$dealId}", [

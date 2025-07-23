@@ -6,7 +6,7 @@ use App\Models\Deal;
 use App\Models\Pipeline;
 use App\Models\Stage;
 use App\Models\HubspotAccount;
-//use App\Services\HubSpot\HubSpotTokenManager;
+
 
 class DealService
 {
@@ -90,8 +90,8 @@ class DealService
      * @param array $data
      * @return array
      */
-    public function updateDeal(int $userId, HubSpotTokenManager $tokenManager, string $dealId, array $data): array
+    public function updateDeal(HubspotAccount $account, HubSpotTokenManager $tokenManager, string $dealId, array $data): array
     {
-        return $this->hubSpot->updateDeal($userId, $tokenManager, $dealId, $data);
+        return $this->hubSpot->updateDeal($account, $tokenManager, $dealId, $data);
     }
 }
