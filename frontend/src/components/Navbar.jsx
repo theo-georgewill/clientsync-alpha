@@ -1,4 +1,3 @@
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
@@ -6,7 +5,7 @@ import { Dropdown } from 'react-bootstrap';
 
 const Navbar = () => {
 	return (
-		<nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3 vw-100 d-flex justify-content-between">
+		<nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3 w-100 d-flex justify-content-between">
 			<a className="navbar-brand" href="/">ClientSync</a>
 			
 			<Dropdown>

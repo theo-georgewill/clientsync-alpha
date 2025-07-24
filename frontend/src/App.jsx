@@ -12,6 +12,7 @@ import Signup from '@/pages/Signup';
 import Logout from '@/pages/Logout';
 import Contacts from '@/pages/Contacts';
 import Deals from '@/pages/Deals';
+import Blank from '@/pages/Blank';
 import Activities from '@/pages/Activities';
 import Settings from '@/pages/Settings';
 import Integrations from './pages/Integrations';
@@ -60,6 +61,7 @@ export default function App() {
 					<Route path="/integrations/hubspot/callback" element={<HubSpotCallback />} /> 
 					<Route path="/contacts" element={<Contacts />} />
 					<Route path="/deals" element={<Deals />} />
+					<Route path="/blank" element={<Blank />} />
 					<Route path="/activities" element={<Activities />} />
 					<Route path="/settings" element={<Settings />} />
 				</Route>

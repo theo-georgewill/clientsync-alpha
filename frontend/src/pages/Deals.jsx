@@ -4,9 +4,10 @@ import "@lourenci/react-kanban/dist/styles.css";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPipelines } from "@/store/slices/pipelineSlice";
 import { fetchDeals, updateDealStage } from "@/store/slices/dealSlice";
-import api from "@/services/api"; // Axios wrapper
+import api from "@/services/api"; 
 
 export default function Deals() {
+
 	const dispatch = useDispatch();
 	const { pipelines } = useSelector((state) => state.pipelines);
 	const { deals } = useSelector((state) => state.deals);
@@ -14,7 +15,7 @@ export default function Deals() {
 	const [board, setBoard] = useState({ columns: [] });
 	const [syncing, setSyncing] = useState(false);
 
-	// Load pipelines + deals on mount
+	// Load pipelines + deals on mount using redux
 	useEffect(() => {
 		dispatch(fetchPipelines());
 		dispatch(fetchDeals());
@@ -26,6 +27,7 @@ export default function Deals() {
 
 		pipelines.forEach((pipeline) => {
 			pipeline.stages.forEach((stage) => {
+				{/* create deal cards */}
 				const cards = deals
 					.filter((deal) => deal.stage_id === stage.stage_id)
 					.map((deal) => ({
@@ -33,14 +35,15 @@ export default function Deals() {
 						title: deal.dealname,
 						description: deal.amount ? `$${deal.amount}` : "No amount",
 						stageId: deal.stage_id,
-					}));
+					}));	
 
+				{/* create kanban stage columns*/}
 				columns.push({
 					id: stage.stage_id,
 					title: (
-						<div className="flex flex-col">
+						<div className="d-flex justify-content-between flex-col">
 							<span className="font-semibold text-sm">
-								{pipeline.label}: {stage.label}
+								{stage.label}
 							</span>
 							<span className="text-xs text-gray-500">
 								{cards.length} deal{cards.length !== 1 ? "s" : ""}
@@ -89,7 +92,7 @@ export default function Deals() {
 	// Handle card click (open modal soon)
 	const handleCardClick = (card) => {
 		console.log("Clicked deal:", card);
-		// TODO: Open deal modal with full info
+		
 	};
 
 	return (
@@ -105,9 +108,9 @@ export default function Deals() {
 				</button>
 			</div>
 
-			{/* Horizontal Scroll Container */}
+			{/* Kanban Board */}
 			<div
-				className="w-100 overflow-x-auto pb-4"
+				className="d-flex overflow-auto pb-4"
 				style={{ whiteSpace: "nowrap" }}
 			>
 				<div style={{ minWidth: "max-content" }}>
@@ -118,7 +121,7 @@ export default function Deals() {
 							<div
 								onClick={() => handleCardClick(card)}
 								style={{ cursor: "pointer" }}
-								className="p-2 border rounded bg-white shadow-sm hover:bg-gray-100"
+								className="my-2 p-2 border rounded bg-white shadow-sm hover:bg-gray-100"
 							>
 								<h5 className="text-sm font-semibold">{card.title}</h5>
 								<p className="text-xs text-gray-500">{card.description}</p>
