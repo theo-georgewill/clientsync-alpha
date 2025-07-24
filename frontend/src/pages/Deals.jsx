@@ -102,12 +102,12 @@ export default function Deals() {
 	return (
 		<>
 			{/* Manual Sync Button */}
-			<div className="flex items-center justify-between mb-4">
+			<div className="d-flex items-center justify-content-between mb-4">
 				<h4 className="text-xl font-semibold">Deals Board</h4>
 				<button
 					onClick={handleSyncNow}
 					disabled={syncing}
-					className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
+					className="px-4 py-2 me-4 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
 				>
 					{syncing ? "Syncing..." : "Sync Now"}
 				</button>
