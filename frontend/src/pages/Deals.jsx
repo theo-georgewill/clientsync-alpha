@@ -33,7 +33,11 @@ export default function Deals() {
 					.map((deal) => ({
 						id: deal.id,
 						title: deal.dealname,
-						description: deal.amount ? `$${deal.amount}` : "No amount",
+						description: deal.amount ?  
+							new Intl.NumberFormat("en-US", {
+								style: "currency",
+								currency: "USD",
+							}).format(deal.amount) : "No amount",
 						stageId: deal.stage_id,
 					}));	
 
@@ -41,12 +45,12 @@ export default function Deals() {
 				columns.push({
 					id: stage.stage_id,
 					title: (
-						<div className="d-flex justify-content-between flex-col">
+						<div className="d-flex justify-content-between flex-row">
 							<span className="font-semibold text-sm">
 								{stage.label}
 							</span>
 							<span className="text-xs text-gray-500">
-								{cards.length} deal{cards.length !== 1 ? "s" : ""}
+								{cards.length} 
 							</span>
 						</div>
 					),
@@ -97,6 +101,7 @@ export default function Deals() {
 
 	return (
 		<>
+			{/* Manual Sync Button */}
 			<div className="flex items-center justify-between mb-4">
 				<h4 className="text-xl font-semibold">Deals Board</h4>
 				<button
@@ -120,11 +125,11 @@ export default function Deals() {
 						renderCard={(card) => (
 							<div
 								onClick={() => handleCardClick(card)}
-								style={{ cursor: "pointer" }}
-								className="my-2 p-2 border rounded bg-white shadow-sm hover:bg-gray-100"
+								style={{ cursor: "pointer", minwidth: "100%" }}
+								className="my-2 w-100 p-2 border rounded bg-white shadow-sm hover:bg-gray-100"
 							>
 								<h5 className="text-sm font-semibold">{card.title}</h5>
-								<p className="text-xs text-gray-500">{card.description}</p>
+								<p className="text-xs font-semibold">Amount: {card.description}</p>
 							</div>
 						)}
 					>

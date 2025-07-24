@@ -15,7 +15,13 @@
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
-
+.react-kanban-column{
+  width: 250px;
+  margin: 1px;
+}
+.react-kanban-column div{
+  width: 100%;
+}
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
