@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('workflows', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->string('name');
+            $table->string('trigger_type'); // e.g., "deal_stage_changed"
+            $table->json('trigger_data')->nullable(); // e.g., {"from": "Qualified", "to": "Closed Won"}
             $table->timestamps();
         });
     }

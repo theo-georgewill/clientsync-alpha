@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('workflow_actions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('workflow_id')->constrained()->cascadeOnDelete();
+            $table->string('type'); // e.g., "send_slack_message", "update_google_sheet"
+            $table->json('settings'); // custom settings for each action
             $table->timestamps();
         });
     }
