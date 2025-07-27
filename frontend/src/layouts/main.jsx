@@ -7,13 +7,13 @@ export default function MainLayout() {
 	return (
 		<>
 			<Navbar />
-			<div className="d-flex">
-				<Sidebar />
-				<div className="flex-grow container">
-					<main className="py-4 ">
-						<Outlet />
-					</main>
-				</div>
+			<div className="w-100 row">
+				<div className="col-md-2">
+					<Sidebar />	
+				</div>				
+				<main className="flex-grow col-md-10 container">
+					<Outlet />
+				</main>
 			</div>
 		</>
 	);

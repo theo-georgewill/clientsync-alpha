@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
 	return (
-		<div className="bg-light border-end vh-100 p-3" style={{ width: '250px' }}>
+		<div className="bg-light border-end vh-100 p-3">
 			<h5>Menu</h5>
 			<ul className="nav flex-column">
 				<li className="nav-item">

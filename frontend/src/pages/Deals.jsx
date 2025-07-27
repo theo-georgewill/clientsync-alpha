@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Board, { moveCard } from "@lourenci/react-kanban";
+import { Modal, Button } from "react-bootstrap";
 import "@lourenci/react-kanban/dist/styles.css";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPipelines } from "@/store/slices/pipelineSlice";
@@ -11,6 +12,9 @@ export default function Deals() {
 	const dispatch = useDispatch();
 	const { pipelines } = useSelector((state) => state.pipelines);
 	const { deals } = useSelector((state) => state.deals);
+
+	const [selectedDeal, setSelectedDeal] = useState(null);
+	const [showModal, setShowModal] = useState(false);
 
 	const [board, setBoard] = useState({ columns: [] });
 	const [syncing, setSyncing] = useState(false);
@@ -94,49 +98,70 @@ export default function Deals() {
 	};
 
 	// Handle card click (open modal soon)
-	const handleCardClick = (card) => {
-		console.log("Clicked deal:", card);
-		
+	const handleCardClick = (deal) => {
+		console.log("Clicked deal:", deal);
+		setSelectedDeal(deal);
+		setShowModal(true);
 	};
 
+	const handleClose = () => {
+		setShowModal(false);
+	}
 	return (
 		<>
-			{/* Manual Sync Button */}
-			<div className="d-flex items-center justify-content-between mb-4">
-				<h4 className="text-xl font-semibold">Deals Board</h4>
-				<button
-					onClick={handleSyncNow}
-					disabled={syncing}
-					className="px-4 py-2 me-4 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-				>
-					{syncing ? "Syncing..." : "Sync Now"}
-				</button>
-			</div>
-
-			{/* Kanban Board */}
-			<div
-				className="d-flex overflow-auto pb-4"
-				style={{ whiteSpace: "nowrap" }}
-			>
-				<div style={{ minWidth: "max-content" }}>
-					<Board
-						onCardDragEnd={handleCardMove}
-						disableColumnDrag
-						renderCard={(card) => (
-							<div
-								onClick={() => handleCardClick(card)}
-								style={{ cursor: "pointer", minwidth: "100%" }}
-								className="my-2 w-100 p-2 border rounded bg-white shadow-sm hover:bg-gray-100"
-							>
-								<h5 className="text-sm font-semibold">{card.title}</h5>
-								<p className="text-xs font-semibold">Amount: {card.description}</p>
-							</div>
-						)}
+			<div className="py-4">
+				{/* Manual Sync Button */}
+				<div className="d-flex items-center justify-content-between mb-4">
+					<h4 className="text-xl font-semibold">Deals Board</h4>
+					<button
+						onClick={handleSyncNow}
+						disabled={syncing}
+						className="px-4 py-2 me-4 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
 					>
-						{board}
-					</Board>
+						{syncing ? "Syncing..." : "Sync Now"}
+					</button>
+				</div>
+
+				{/* Kanban Board */}
+				<div
+					className="d-flex py-4  overflow-auto "
+					style={{ whiteSpace: "nowrap" }}
+				>
+					<div style={{ minWidth: "max-content" }}>
+						<Board
+							onCardDragEnd={handleCardMove}
+							disableColumnDrag
+							renderCard={(card) => (
+								<div
+									onClick={() => handleCardClick(card)}
+									style={{ cursor: "pointer", minwidth: "100%" }}
+									className="my-2 w-100 p-2 border rounded bg-white shadow-sm hover:bg-gray-100"
+								>
+									<h5 className="text-sm font-semibold">{card.title}</h5>
+									<p className="text-xs font-semibold">Amount: {card.description}</p>
+								</div>
+							)}
+						>
+							{board}
+						</Board>
+					</div>
 				</div>
 			</div>
+			<Modal show={showModal} onHide={handleClose}>
+				<Modal.Header closeButton>
+					<Modal.Title>{selectedDeal?.title}</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<p>{selectedDeal?.description}</p>
+					{/* Add more details here */}
+				</Modal.Body>
+				<Modal.Footer>
+					<Button variant="secondary" onClick={handleClose}>
+						Close
+					</Button>
+					{/* Add more actions like Edit, Delete, etc. */}
+				</Modal.Footer>
+			</Modal>
 		</>
 	);
 }
