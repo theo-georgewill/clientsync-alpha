@@ -1,6 +1,6 @@
 ## Overview
 
-**ClientSync Alpha** is a project that demonstrates real-world integration between a Laravel backend and HubSpot’s CRM platform via OAuth2. It includes a React-based frontend and showcases essential CRM functions like syncing contacts, handling webhooks, and managing pipelines.
+**ClientSync Alpha** is a project that integrates a Laravel backend and HubSpot’s CRM platform via OAuth2. It includes a React-based frontend and showcases essential CRM functions like syncing contacts, handling webhooks, and managing pipelines.
 
 ---
 
