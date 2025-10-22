@@ -22,10 +22,10 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid credentials'], 401);
         }
 
-        // 🔐 Important: regenerate session!
+        // Important: regenerate session!
         $request->session()->regenerate();
 
-        return response()->json(['message' => 'Logged in']);
+        return response()->json(['message' => 'Logged in successfully']);
     }
 
     public function logout(Request $request)

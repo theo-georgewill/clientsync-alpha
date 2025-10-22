@@ -15,10 +15,11 @@ export default function Login() {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
-	const handleSubmit = async (e) => {
+	const handleLogin = async (e) => {
 		e.preventDefault();
 
 		try {
+			//dispatch login thunk
 			await dispatch(login({ email, password })).unwrap();
 			
 		} catch (err) {
@@ -36,7 +37,7 @@ export default function Login() {
 		<Card className="mx-auto mt-5" style={{ maxWidth: '400px' }}>
 			<Card.Body>
 				<Card.Title className="mb-4">Login</Card.Title>
-				<Form onSubmit={handleSubmit}>
+				<Form onSubmit={handleLogin}>
 					<Form.Group className="mb-3">
 						<Form.Label>Email</Form.Label>
 						<Form.Control
@@ -46,6 +47,7 @@ export default function Login() {
 							required
 						/>
 					</Form.Group>
+
 					<Form.Group className="mb-3">
 						<Form.Label>Password</Form.Label>
 						<Form.Control
@@ -55,6 +57,7 @@ export default function Login() {
 							required
 						/>
 					</Form.Group>
+
 					<Button
 						type="submit"
 						variant="primary"
@@ -63,12 +66,15 @@ export default function Login() {
 					>
 						{loading ? 'Logging in...' : 'Login'}
 					</Button>
+
 					<p className="pt-3 text-center">
 						Don't have an account? <Link to="/signup">Sign up</Link>
 					</p>
+
 					{error && (
 						<p className="text-danger text-center mt-2">{error}</p>
 					)}
+					
 				</Form>
 			</Card.Body>
 		</Card>
