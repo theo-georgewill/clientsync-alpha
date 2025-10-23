@@ -31,6 +31,15 @@ export const logout = createAsyncThunk('auth/logout', async (_, { rejectWithValu
 	}
 });
 
+export const register = createAsyncThunk('auth/register', async (userData, { dispatch, rejectWithValue }) => {
+	try {
+		await api.get('/sanctum/csrf-cookie');
+		await api.post('/api/register', userData);
+		return await dispatch(fetchUser()).unwrap();
+	} catch (err) {
+		return rejectWithValue(err.response?.data?.message || 'Registration failed');
+	}
+});
 const authSlice = createSlice({
 	name: 'auth',
 	initialState: {

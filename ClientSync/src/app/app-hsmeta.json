@@ -8,11 +8,16 @@
     "auth": {
       "type": "oauth",
       "redirectUrls": [
-        "http://localhost:3000"
+        "http://localhost:5173/integrations/hubspot/callback"
       ],
       "requiredScopes": [
         "crm.objects.contacts.read",
-        "crm.objects.contacts.write"
+        "crm.objects.contacts.write",
+        "oauth", 
+        "crm.objects.deals.read", 
+        "crm.objects.deals.write", 
+        "crm.objects.companies.read", 
+        "crm.objects.companies.write"
       ],
       "optionalScopes": [],
       "conditionallyRequiredScopes": []

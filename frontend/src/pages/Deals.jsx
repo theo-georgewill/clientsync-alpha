@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Table, Button, Form, InputGroup } from 'react-bootstrap';
 import Board, { moveCard } from "@lourenci/react-kanban";
 import "@lourenci/react-kanban/dist/styles.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -27,12 +28,12 @@ export default function Deals() {
 		pipelines.forEach((pipeline) => {
 			pipeline.stages.forEach((stage) => {
 				const cards = deals
-					.filter((deal) => deal.stage?.id === stage.id)
+					.filter((deal) => deal?.stage_id === stage.stage_id)
 					.map((deal) => ({
 						id: deal.id,
 						title: deal.dealname,
 						description: deal.amount ? `$${deal.amount}` : "No amount",
-						stageId: stage.id,
+						stageId: stage.stage_id,
 					}));
 
 				columns.push({
@@ -89,28 +90,35 @@ export default function Deals() {
 	// Handle card click (open modal soon)
 	const handleCardClick = (card) => {
 		console.log("Clicked deal:", card);
-		// TODO: Open deal modal with full info
+	};
+
+	const handleAddContact = () => {
+		alert("Add Contact functionality coming soon!");
 	};
 
 	return (
 		<>
-			<div className="flex items-center justify-between mb-4">
+			<div className="d-flex items-center justify-content-between mb-4" style={{width: "90%"}}>
 				<h4 className="text-xl font-semibold">Deals Board</h4>
-				<button
-					onClick={handleSyncNow}
-					disabled={syncing}
-					className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-				>
-					{syncing ? "Syncing..." : "Sync Now"}
-				</button>
+				<div>
+					<Button onClick={handleAddContact} variant="primary" className="me-2">+ Add Deal</Button>
+
+					<Button
+						onClick={handleSyncNow}
+						disabled={syncing}
+						variant="success"
+					>
+						{syncing ? "Syncing..." : "Sync Now"}
+					</Button>
+				</div>
 			</div>
 
 			{/* Horizontal Scroll Container */}
 			<div
 				className="w-100 overflow-x-auto pb-4"
-				style={{ whiteSpace: "nowrap" }}
+				style={{ whiteSpace: "nowrap", width: "100vw" }}
 			>
-				<div style={{ minWidth: "max-content" }}>
+				<div style={{ width: "max-content" }}>
 					<Board
 						onCardDragEnd={handleCardMove}
 						disableColumnDrag

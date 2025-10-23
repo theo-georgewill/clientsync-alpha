@@ -2,22 +2,16 @@ import api from '@/services/api';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // ✅ Create a new deal
-export const createDeal = createAsyncThunk(
-	'deals/create',
-	async (dealData, thunkAPI) => {
-		const response = await api.post('/api/deals', dealData);
-		return response.data.deal;
-	}
-);
+export const createDeal = createAsyncThunk('deals/create', async (dealData, thunkAPI) => {
+	const response = await api.post('/api/deals', dealData);
+	return response.data.deal;
+});
 
 // ✅ Fetch all deals
-export const fetchDeals = createAsyncThunk(
-	'deals/fetch',
-	async () => {
-		const response = await api.get('/api/deals');
-		return response.data;
-	}
-);
+export const fetchDeals = createAsyncThunk('deals/fetch', async () => {
+	const response = await api.get('/api/deals');
+	return response.data;
+});
 
 // ✅ Update deal stage (e.g., after drag-and-drop)
 export const updateDealStage = createAsyncThunk(

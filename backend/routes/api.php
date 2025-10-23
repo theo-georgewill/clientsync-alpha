@@ -10,6 +10,7 @@ use App\Models\User;
 
 // Login
 Route::middleware(['web'])->group(function () {
+    Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/logout', [AuthController::class, 'logout']);//needs web middleware group
 });
@@ -35,7 +36,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // ✅ Deals list (with pipeline & stage)
     Route::get('/deals', [DealController::class, 'index']);
-    
+
     //Create deal protected route
     Route::post('/deals', [DealController::class, 'store']);
 

@@ -38,7 +38,7 @@ export default function App() {
 		checkAuth();
 	}, [dispatch]);
 
-	// Show spinner until we know if user is authenticated
+	// Show loading until we know if user is authenticated
 	if (checkingAuth || loading) {
 		return <div className="text-center mt-5">Authenticating user...</div>;
 	}

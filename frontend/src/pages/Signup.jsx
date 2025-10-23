@@ -1,19 +1,25 @@
-	import { useState } from 'react';
+	import { useState, useEffect } from 'react';
 	import { Form, Button, Card } from 'react-bootstrap';
-	import { useNavigate } from 'react-router-dom';
-	import axios from 'axios';
-	import { Link } from 'react-router-dom';
+	import { useNavigate, Link } from 'react-router-dom';
+	import { useDispatch, useSelector } from 'react-redux';
+	import { register } from '@/store/slices/authSlice';
 
 	export default function Signup() {
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
+	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	const handleSubmit = async (e) => {
+	const [name, setName] = useState('');
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	
+
+
+	const { loading, error, user } = useSelector((state) => state.auth);
+
+	const handleRegister = async (e) => {
 		e.preventDefault();
 		try {
-			await axios.post('http://localhost:8000/api/register', { email, password });
-			navigate('/dashboard');
+			await dispatch(register({ name, email, password })).unwrap();
 		} catch (err) {
 			alert('Signup failed');
 		}
@@ -23,11 +29,21 @@
   		window.location.href = 'http://localhost:8000/api/hubspot/connect';
 	}
 
+	useEffect(() => {
+		if (user) {
+			navigate('/');
+		}
+	}, [user, navigate]);
+
 	return (
 		<Card className="mx-auto mt-5" style={{ maxWidth: '400px' }}>
 			<Card.Body>
 				<Card.Title>Sign Up</Card.Title>
-				<Form onSubmit={handleSubmit}>
+				<Form onSubmit={handleRegister}>
+					<Form.Group className="mb-3">
+						<Form.Label>Name</Form.Label>
+						<Form.Control type="text" value={name} onChange={e => setName(e.target.value)} required />
+					</Form.Group>
 					<Form.Group className="mb-3">
 						<Form.Label>Email</Form.Label>
 						<Form.Control type="email" value={email} onChange={e => setEmail(e.target.value)} required />

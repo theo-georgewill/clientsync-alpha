@@ -2,9 +2,7 @@ import api from '@/services/api';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // ✅ Fetch all pipelines (with stages)
-export const fetchPipelines = createAsyncThunk(
-  'pipelines/fetch',
-  async () => {
+export const fetchPipelines = createAsyncThunk('pipelines/fetch',async () => {
     const response = await api.get('/api/pipelines');
     return response.data;
   }
