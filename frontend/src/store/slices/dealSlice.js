@@ -16,9 +16,17 @@ export const fetchDeals = createAsyncThunk('deals/fetch', async () => {
 // ✅ Update deal stage (e.g., after drag-and-drop)
 export const updateDealStage = createAsyncThunk(
 	'deals/updateStage',
-	async ({ id, stage_id }) => {
-		const response = await api.patch(`/api/deals/${id}`, { stage_id });
-		return response.data.deal;
+	async ({ id, stage_id }, { rejectWithValue }) => {
+		try {
+			const response = await api.patch(`/api/deals/${id}`, { stage_id });
+
+			if (!response.data || !response.data.deal) {
+				return rejectWithValue('No data received from server');
+			}
+			return response.data.deal;
+		} catch (error) {
+			return rejectWithValue(error.response?.data?.message || 'Failed to update deal stage');
+		}
 	}
 );
 

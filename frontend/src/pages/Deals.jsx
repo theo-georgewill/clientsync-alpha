@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Table, Button, Form, InputGroup } from 'react-bootstrap';
-import Board, { moveCard } from "@lourenci/react-kanban";
-import "@lourenci/react-kanban/dist/styles.css";
+import Board, { moveCard } from "@asseinfo/react-kanban";
+import "@asseinfo/react-kanban/dist/styles.css";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchPipelines } from "@/store/slices/pipelineSlice";
 import { fetchDeals, updateDealStage } from "@/store/slices/dealSlice";
@@ -30,10 +30,13 @@ export default function Deals() {
 				const cards = deals
 					.filter((deal) => deal?.stage_id === stage.stage_id)
 					.map((deal) => ({
-						id: deal.id,
+						id: deal.deal_id,
 						title: deal.dealname,
 						description: deal.amount ? `$${deal.amount}` : "No amount",
-						stageId: stage.stage_id,
+						metadata: {
+							deal_id: deal.id,
+							stage_id: parseInt(stage.id)
+						}
 					}));
 
 				columns.push({
@@ -73,17 +76,27 @@ export default function Deals() {
 
 	// Drag card to new column = update deal stage
 	const handleCardMove = async (card, source, destination) => {
-		const updatedBoard = moveCard(board, source, destination);
-		setBoard(updatedBoard);
+		try {
+			//Update UI optimistically
+			const updatedBoard = moveCard(board, source, destination);
+			setBoard(updatedBoard);
+			console.log("Card moved:", card, source, destination, updatedBoard);
 
-		if (source.fromColumnId !== destination.toColumnId) {
-			try {
-				await dispatch(
-					updateDealStage({ id: card.id, stage_id: destination.toColumnId })
-				);
-			} catch (err) {
-				console.error("Failed to update deal stage", err);
+			// Only update backend if moved to different column
+			if (source.fromColumnId !== destination.toColumnId) {
+				try {
+					await dispatch(updateDealStage({ 
+						id: card.metadata.deal_id, // Use deal_id from metadata
+						stage_id: destination.toColumnId
+					})).unwrap();
+				} catch (err) {
+					// Revert on failure
+					setBoard(board);	
+					console.error("Failed to update deal stage", err);
+				}
 			}
+		} catch (error) {
+			console.error("Failed to move card", error);
 		}
 	};
 

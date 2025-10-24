@@ -5,14 +5,18 @@ namespace App\Http\Controllers;
 use App\Services\HubSpot\DealService;
 use Illuminate\Http\Request;
 use App\Models\Deal;
+use \App\Models\Stage;
+use App\Services\Hubspot\HubSpotTokenManager;
 
 class DealController extends Controller
 {
     protected DealService $dealService;
+    protected HubSpotTokenManager $tokenManager;
 
-    public function __construct(DealService $dealService)
+    public function __construct(DealService $dealService, HubSpotTokenManager $tokenManager)
     {
         $this->dealService = $dealService;
+        $this->tokenManager = $tokenManager;
     }
 
     public function store(Request $request)
@@ -50,16 +54,28 @@ class DealController extends Controller
         $deal = Deal::findOrFail($id);
         $user = $request->user();
         $hubspotAccount = $user->hubspotAccount;
-        $stage = \App\Models\Stage::findOrFail($request->stage_id);
-
-        // Update on HubSpot
-        $this->dealService->updateDeal($deal->hubspot_id, [
-            'dealstage' => $stage->label_key,
-        ], $hubspotAccount->access_token);
+        $stage = Stage::findOrFail($request->stage_id);
 
         // Update locally
-        $deal->stage_id = $stage->id;
+        $deal->stage_id = $stage->stage_id;
         $deal->save();
+
+       // Only attempt HubSpot update if we have a hubspot_id and an access token
+        if (!empty($hubspotAccount->hubspot_user_id) && !empty($hubspotAccount->access_token)) {
+            try {
+                // userId, dealId, updateData
+                $this->dealService->updateDeal($hubspotAccount->hubspot_user_id, $this->tokenManager, $deal->deal_id, [
+                    'dealstage' => $stage->label_key,
+                ]);
+            } catch (\TypeError $e) {
+                // Defensive: log and continue so API doesn't 500 for type mismatches
+                \Log::error('DealService updateDeal TypeError: '.$e->getMessage());
+            } catch (\Throwable $e) {
+                \Log::error('DealService update failed: '.$e->getMessage().$hubspotAccount->hubspot_user_id.' and '.$hubspotAccount->access_token);
+            }
+        } else {
+            \Log::warning('Skipping HubSpot update for deal '.$stage->label_key.' — missing hubspot_id or access token. hubspot account id: '.$hubspotAccount->hubspot_user_id.' and hubspot access token:'.$hubspotAccount->access_token);
+        }
 
         return response()->json(['deal' => $deal->fresh(['pipeline', 'stage'])]);
     }
