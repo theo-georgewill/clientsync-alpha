@@ -6,7 +6,7 @@ use App\Models\Deal;
 use App\Models\Pipeline;
 use App\Models\Stage;
 use App\Models\HubspotAccount;
-//use App\Services\HubSpot\HubSpotTokenManager;
+use App\Services\HubSpot\HubSpotTokenManager;
 
 class DealService
 {
