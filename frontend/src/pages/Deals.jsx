@@ -128,10 +128,10 @@ export default function Deals() {
 
 			{/* Horizontal Scroll Container */}
 			<div
-				className="w-100 overflow-x-auto pb-4"
-				style={{ whiteSpace: "nowrap", width: "100vw" }}
+				className="overflow-x-auto pb-4"
+				style={{ whiteSpace: "nowrap" }}
 			>
-				<div style={{ width: "max-content" }}>
+				<div style={{ width: "90%" }}>
 					<Board
 						onCardDragEnd={handleCardMove}
 						disableColumnDrag
