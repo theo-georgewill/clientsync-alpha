@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Carbon\Carbon;
-use App\Models\Activity; 
+use App\Models\Activity;
 
 class ActivitySeeder extends Seeder
 {
@@ -16,7 +16,6 @@ class ActivitySeeder extends Seeder
     {
         $activities = [
             [
-                'user_id' => 1,
                 'hubspot_account_id' => 1,
                 'object_type' => 'contact',
                 'event_type' => 'contact_created',
@@ -27,7 +26,6 @@ class ActivitySeeder extends Seeder
                 'details' => json_encode(['name' => 'Jane Doe']),
             ],
             [
-                'user_id' => 1,
                 'hubspot_account_id' => 1,
                 'object_type' => 'deal',
                 'event_type' => 'deal_moved',
@@ -38,7 +36,6 @@ class ActivitySeeder extends Seeder
                 'details' => json_encode(['from_stage' => 'Proposal', 'to_stage' => 'Negotiation']),
             ],
             [
-                'user_id' => 1,
                 'hubspot_account_id' => 1,
                 'object_type' => 'note',
                 'event_type' => 'note_added',
@@ -49,7 +46,6 @@ class ActivitySeeder extends Seeder
                 'details' => json_encode(['subject' => 'Follow-up call']),
             ],
             [
-                'user_id' => 1,
                 'hubspot_account_id' => 1,
                 'object_type' => 'integration',
                 'event_type' => 'integration_synced',
