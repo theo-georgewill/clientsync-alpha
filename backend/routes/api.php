@@ -6,6 +6,8 @@ use App\Http\Controllers\HubSpotController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\PipelineController;
+use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\WebhookController;
 use App\Models\User;
 
 // Login
@@ -14,7 +16,7 @@ Route::middleware(['web'])->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/logout', [AuthController::class, 'logout']);//needs web middleware group
 });
-//    Route::get('/hubspot/callback', [HubSpotController::class, 'handleCallback']);
+
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
@@ -30,17 +32,19 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/hubspot/callback', [HubSpotController::class, 'handleCallback']);
     Route::post('/hubspot/sync', [HubSpotController::class, 'sync']);
 
-
-    // ✅ Pipelines with stages
+    // Pipelines with stages
     Route::get('/pipelines', [PipelineController::class, 'index']);
-
-    // ✅ Deals list (with pipeline & stage)
+    // Deals list (with pipeline & stage)
     Route::get('/deals', [DealController::class, 'index']);
-
-    //Create deal protected route
+    // Create deal protected route
     Route::post('/deals', [DealController::class, 'store']);
-
-    // ✅ Update deal stage (for drag & drop)
+    // Update deal stage (for drag & drop)
     Route::patch('/deals/{id}', [DealController::class, 'update']);
+
+    // Activities
+    Route::get('/activities', [ActivityController::class, 'index']);
+
+    //Hubspot Webhook
+    Route::post('/webhooks/hubspot', [WebhookController::class, 'handleHubspot']);
 });
 
