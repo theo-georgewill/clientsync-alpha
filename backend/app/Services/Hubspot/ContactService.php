@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\HubSpot;
+namespace App\Services\Hubspot;
 
 use App\Models\Contact;
 use App\Models\HubspotAccount;
@@ -35,6 +35,7 @@ class ContactService
             Contact::updateOrCreate(
                 ['contact_id' => $item['id']],
                 [
+                    'hubspot_account_id' => $account->id,
                     'email' => $props['email'] ?? null,
                     'firstname' => $props['firstname'] ?? null,
                     'lastname' => $props['lastname'] ?? null,

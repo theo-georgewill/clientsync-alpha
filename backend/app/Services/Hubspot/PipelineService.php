@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\HubSpot;
+namespace App\Services\Hubspot;
 
 use App\Models\Pipeline;
 use App\Models\Stage;

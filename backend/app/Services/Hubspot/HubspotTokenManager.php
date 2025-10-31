@@ -5,21 +5,21 @@ namespace App\Services\Hubspot;
 use App\Models\HubspotAccount;
 use Illuminate\Support\Facades\Log;
 
-class HubSpotTokenManager
+class HubspotTokenManager
 {
-    protected HubSpotService $hubspotService;
+    protected HubspotService $hubspotService;
 
-    public function __construct(HubSpotService $hubspotService)
+    public function __construct(HubspotService $hubspotService)
     {
         $this->hubspotService = $hubspotService;
     }
     /**
-     * Get a valid access token for a given HubSpot account.
+     * Get a valid access token for a given Hubspot account.
      */
     public function getAccessTokenFromAccount(HubspotAccount $account): string
     {
         if (empty($account->refresh_token)) {
-            throw new \Exception('No refresh token available for this HubSpot account.');
+            throw new \Exception('No refresh token available for this Hubspot account.');
         }
 
         if ($account->isExpired()) {

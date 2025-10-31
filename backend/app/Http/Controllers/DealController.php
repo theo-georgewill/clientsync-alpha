@@ -34,13 +34,44 @@ class DealController extends Controller
         $user = $request->user();
         $hubspotAccount = $user->hubspotAccount;
 
-        $data = $request->only(['dealname', 'amount', 'pipeline', 'dealstage']);
-        $deal = $this->dealService->createDeal($data, $hubspotAccount->access_token);
+        try {
+            // Create in HubSpot first
+            $data = $request->only(['dealname', 'amount', 'pipeline', 'dealstage']);
+            $hubspotDeal = $this->dealService->createDeal($data, $hubspotAccount->access_token);
 
-        // (Optional) store in local DB
-        // Deal::create([...]);
+            // Then store in local DB
+            $deal = Deal::create([
+                'hubspot_account_id' => $hubspotAccount->id,
+                'deal_id' => $hubspotDeal['id'], // HubSpot deal ID
+                'dealname' => $data['dealname'],
+                'pipeline_id' => $data['pipeline'],
+                'stage_id' => $data['dealstage'],
+                'amount' => $data['amount'],
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
 
-        return response()->json(['deal' => $deal]);
+            Log::info('Deal created successfully', [
+                'deal_id' => $deal->id,
+                'hubspot_deal_id' => $hubspotDeal['id']
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'deal' => $deal->fresh(['pipeline', 'stage'])
+            ], 201);
+
+        } catch (\Exception $e) {
+            Log::error('Failed to create deal', [
+                'error' => $e->getMessage(),
+                'data' => $data
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to create deal'
+            ], 500);
+        }
     }
 
     public function index(Request $request)

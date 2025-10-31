@@ -8,6 +8,7 @@ use App\Http\Controllers\DealController;
 use App\Http\Controllers\PipelineController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\ContactController;
 use App\Models\User;
 
 // Login
@@ -40,6 +41,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/deals', [DealController::class, 'store']);
     // Update deal stage (for drag & drop)
     Route::patch('/deals/{id}', [DealController::class, 'update']);
+
+
+    // Contacts list
+    Route::get('/contacts', [ContactController::class, 'index']);
+    // Create contact protected route
+    Route::post('/contacts', [ContactController::class, 'store']);
+    // Update contact
+    Route::patch('/contacts/{id}', [ContactController::class, 'update']);
 
     // Activities
     Route::get('/activities', [ActivityController::class, 'index']);

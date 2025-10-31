@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Services\Hubspot\HubSpotService;
+use App\Services\Hubspot\HubspotService;
 use App\Models\User;
 use App\Models\HubspotAccount;
 use App\Services\Hubspot\PipelineService;
@@ -13,11 +13,11 @@ use App\Services\Hubspot\ContactService;
 use App\Services\Hubspot\CompanyService;
 use App\Services\Hubspot\HubspotTokenManager;
 
-class HubSpotController extends Controller
+class HubspotController extends Controller
 {
-    protected HubSpotService $hubspot;
+    protected HubspotService $hubspot;
 
-    public function __construct(HubSpotService $hubspot)
+    public function __construct(HubspotService $hubspot)
     {
         $this->hubspot = $hubspot;
     }

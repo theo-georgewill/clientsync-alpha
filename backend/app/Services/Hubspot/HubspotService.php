@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\HubspotAccount;
 
-class HubSpotService
+class HubspotService
 {
     protected string $clientId;
     protected string $clientSecret;
@@ -169,5 +169,31 @@ class HubSpotService
         }
 
         return $response->json();
+    }
+
+     /**
+     * Create a new contact in HubSpot.
+     */
+    public function createContact(HubspotAccount $account, HubSpotTokenManager $tokenManager, array $data)
+    {
+        try {
+            $accessToken = $tokenManager->getAccessTokenFromAccount($account);
+
+            // Create contact on HubSpot
+            $response = Http::withToken($accessToken)
+                ->post('https://api.hubapi.com/crm/v3/objects/contacts', [
+                    'properties' => [
+                        'email' => $data['email'] ?? null,
+                        'firstname' => $data['firstname'] ?? null,
+                        'lastname' => $data['lastname'] ?? null,
+                        'phone' => $data['phone'] ?? null,
+                    ],
+                ]);
+
+            return $response;
+        } catch (\Exception $e) {
+            Log::error('Hubspot contact creation failed', ['error' => $e->getMessage()]);
+            throw $e;
+        }
     }
 }

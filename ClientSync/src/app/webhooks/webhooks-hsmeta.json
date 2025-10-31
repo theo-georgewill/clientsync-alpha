@@ -3,7 +3,7 @@
   "type": "webhooks",
   "config": {
     "settings": {
-      "targetUrl": "https://lissette-divisible-darci.ngrok-free.dev",
+      "targetUrl": "https://lissette-divisible-darci.ngrok-free.dev/api/webhooks/hubspot",
       "maxConcurrentRequests": 10
     },
     "subscriptions": {
