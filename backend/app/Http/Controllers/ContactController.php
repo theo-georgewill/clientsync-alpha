@@ -49,12 +49,13 @@ class ContactController extends Controller
             $user = $request->user();
             $token = $this->tokenManager->getAccessToken($user->id);
             $account = $user->hubspotAccount;
+
             // Create contact in HubSpot
             $response = $this->hubspot->createContact($account, $this->tokenManager, [
                 'properties' => [
+                    'email'     => $validated['email'],
                     'firstname' => $validated['firstname'],
                     'lastname'  => $validated['lastname'],
-                    'email'     => $validated['email'],
                     'phone'     => $validated['phone'] ?? null,
                 ],
             ]);

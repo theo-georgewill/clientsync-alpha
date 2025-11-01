@@ -179,17 +179,29 @@ class HubspotService
         try {
             $accessToken = $tokenManager->getAccessTokenFromAccount($account);
 
-            // Create contact on HubSpot
-            $response = Http::withToken($accessToken)
-                ->post('https://api.hubapi.com/crm/v3/objects/contacts', [
-                    'properties' => [
-                        'email' => $data['email'] ?? null,
-                        'firstname' => $data['firstname'] ?? null,
-                        'lastname' => $data['lastname'] ?? null,
-                        'phone' => $data['phone'] ?? null,
-                    ],
-                ]);
+            // Build base payload
+            $payload = [
+                'properties' => [
+                    'email' => $data['properties']['email'] ?? null,
+                    'firstname' => $data['properties']['firstname'] ?? null,
+                    'lastname' => $data['properties']['lastname'] ?? null,
+                    'phone' => $data['properties']['phone'] ?? null,
+                ],
+            ];
 
+            //Optionally include associations
+            if (!empty($data['associations'])) {
+                $payload['associations'] = $data['associations'];
+            }
+
+            //Log request payload for debugging
+            Log::info('HubSpot contact create payload', [
+                'token' => substr($accessToken, 0, 10) . '...', // Masked
+                'payload' => $payload
+            ]);
+
+            // Create contact on HubSpot using API
+            $response = Http::withToken($accessToken)->post('https://api.hubapi.com/crm/v3/objects/contacts', $payload);
             return $response;
         } catch (\Exception $e) {
             Log::error('Hubspot contact creation failed', ['error' => $e->getMessage()]);

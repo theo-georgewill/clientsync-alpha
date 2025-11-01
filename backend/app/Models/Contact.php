@@ -14,6 +14,7 @@ class Contact extends Model
         'email',
         'firstname',
         'lastname',
+        'phone',
     ];
 
     public function deals()
