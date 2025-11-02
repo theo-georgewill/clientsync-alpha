@@ -7,11 +7,13 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\Hubspot\HubspotService;
 use App\Models\User;
 use App\Models\HubspotAccount;
+use App\Models\Activity;
 use App\Services\Hubspot\PipelineService;
 use App\Services\Hubspot\DealService;
 use App\Services\Hubspot\ContactService;
 use App\Services\Hubspot\CompanyService;
 use App\Services\Hubspot\HubspotTokenManager;
+use Illuminate\Support\Facades\Log;
 
 class HubspotController extends Controller
 {
@@ -71,7 +73,7 @@ class HubspotController extends Controller
                 'refresh_token' => $tokens['refresh_token'],
                 'expires_at' => now()->addSeconds($tokens['expires_in']),
                 'scopes' => implode(' ', $tokenInfo['scopes'] ?? []),
-                'user_id' => $user->id, // optionally update user relation
+                //'user_id' => $user->id, // optionally update user relation
             ]);
         } else {
             // Create new record
@@ -84,6 +86,22 @@ class HubspotController extends Controller
             ]);
         }
 
+        // Log Integration Connected Activity
+        $account = $user->hubspotAccount;
+        Activity::create([
+            'hubspot_account_id' => $account->id,
+            'object_type' => 'integration',
+            'event_type' => 'connected',
+            'object_id' => null,
+            'occurred_at' => now(),
+            'title' => 'Integration Connected',
+            'description' => 'HubSpot account connected successfully.',
+            'details' => [
+                'hubspot_user_id' => $hubspotUserId,
+                'scopes' => $tokenInfo['scopes'] ?? [],
+            ],
+        ]);
+        Log::info('HubSpot account connected', ['user_id' => $user->id, 'hubspot_user_id' => $hubspotUserId]);
         return response()->json(['message' => 'HubSpot Connected']);
     }
 

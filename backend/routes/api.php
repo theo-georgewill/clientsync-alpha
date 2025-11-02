@@ -24,12 +24,9 @@ Route::middleware(['web'])->group(function () {
 
 //Api routes that need authentication
 Route::middleware(['auth:sanctum'])->group(function () {
-
     Route::get('/user', [AuthController::class, 'user']);//needs auth:sanctum to ensure csrf
 
-    // Add other protected routes here
-    //Route::get('/contacts', [ContactController::class, 'index']);
-
+    // HubSpot integration routes
     Route::get('/hubspot/connect', [HubSpotController::class, 'redirectToHubSpot']);
     Route::get('/hubspot/auth-url', [HubSpotController::class, 'getAuthUrl']);
     Route::get('/hubspot/status', [HubSpotController::class, 'status']);
