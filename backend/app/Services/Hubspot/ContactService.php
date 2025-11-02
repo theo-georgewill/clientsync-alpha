@@ -6,11 +6,11 @@ use App\Models\Contact;
 use App\Models\HubspotAccount;
 class ContactService
 {
-    protected HubSpotService $hubSpot;
+    protected HubspotService $hubspot;
 
-    public function __construct(HubSpotService $hubSpot)
+    public function __construct(HubspotService $hubspot)
     {
-        $this->hubSpot = $hubSpot;
+        $this->hubspot = $hubspot;
     }
 
     /**

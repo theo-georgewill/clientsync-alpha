@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Log;
 class DealController extends Controller
 {
     protected DealService $dealService;
-    protected HubSpotTokenManager $tokenManager;
+    protected HubspotTokenManager $tokenManager;
 
-    public function __construct(DealService $dealService, HubSpotTokenManager $tokenManager)
+    public function __construct(DealService $dealService, HubspotTokenManager $tokenManager)
     {
         $this->dealService = $dealService;
         $this->tokenManager = $tokenManager;

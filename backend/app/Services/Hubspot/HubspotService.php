@@ -182,10 +182,10 @@ class HubspotService
             // Build base payload
             $payload = [
                 'properties' => [
-                    'email' => $data['properties']['email'] ?? null,
-                    'firstname' => $data['properties']['firstname'] ?? null,
-                    'lastname' => $data['properties']['lastname'] ?? null,
-                    'phone' => $data['properties']['phone'] ?? null,
+                    'email' => $data['email'] ?? null,
+                    'firstname' => $data['firstname'] ?? null,
+                    'lastname' => $data['lastname'] ?? null,
+                    'phone' => $data['phone'] ?? null,
                 ],
             ];
 

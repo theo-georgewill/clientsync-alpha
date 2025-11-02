@@ -37,7 +37,7 @@ export default function Contacts() {
         ...form,
       });
 
-      setContacts((prev) => [...prev, data.data.entity]);
+      setContacts((prev) => [data.data.local, ...prev]);
       setShowModal(false);
       setForm({ firstname: "", lastname: "", email: "", phone: "" });
     } catch (error) {
@@ -77,6 +77,7 @@ export default function Contacts() {
             <th>First name</th>
             <th>Last name</th>
             <th>Email</th>
+            <th>Phone</th>
           </tr>
         </thead>
         <tbody>
@@ -86,11 +87,12 @@ export default function Contacts() {
                 <td>{contact.firstname}</td>
                 <td>{contact.lastname}</td>
                 <td>{contact.email}</td>
+                <td>{contact.phone}</td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="3" className="text-center text-muted">
+              <td colSpan="4" className="text-center text-muted">
                 No contacts found
               </td>
             </tr>

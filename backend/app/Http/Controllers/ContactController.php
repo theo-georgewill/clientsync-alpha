@@ -5,16 +5,16 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Contact;
 use App\Models\HubspotAccount;
-use App\Services\HubSpot\HubSpotService;
-use App\Services\HubSpot\HubSpotTokenManager;
+use App\Services\Hubspot\HubspotService;
+use App\Services\Hubspot\HubspotTokenManager;
 use Illuminate\Support\Facades\Log;
 
 class ContactController extends Controller
 {
-    protected HubSpotService $hubSpot;
-    protected HubSpotTokenManager $tokenManager;
+    protected HubspotService $hubspot;
+    protected HubspotTokenManager $tokenManager;
 
-    public function __construct(HubSpotService $hubspot, HubSpotTokenManager $tokenManager)
+    public function __construct(HubspotService $hubspot, HubspotTokenManager $tokenManager)
     {
         $this->hubspot = $hubspot;
         $this->tokenManager = $tokenManager;
@@ -50,15 +50,15 @@ class ContactController extends Controller
             $token = $this->tokenManager->getAccessToken($user->id);
             $account = $user->hubspotAccount;
 
+            $data = [
+                'email'     => $validated['email'],
+                'firstname' => $validated['firstname'],
+                'lastname'  => $validated['lastname'],
+                'phone'     => $validated['phone'] ?? null,
+            ];
+
             // Create contact in HubSpot
-            $response = $this->hubspot->createContact($account, $this->tokenManager, [
-                'properties' => [
-                    'email'     => $validated['email'],
-                    'firstname' => $validated['firstname'],
-                    'lastname'  => $validated['lastname'],
-                    'phone'     => $validated['phone'] ?? null,
-                ],
-            ]);
+            $response = $this->hubspot->createContact($account, $this->tokenManager, $data);
 
             // Store locally
             $contact = Contact::create([

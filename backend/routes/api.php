@@ -7,18 +7,22 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DealController;
 use App\Http\Controllers\PipelineController;
 use App\Http\Controllers\ActivityController;
-use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\WebhookController;
 use App\Models\User;
 
-// Login
+
+//Hubspot Webhook. No auth needed as HubSpot uses secret key verification
+Route::post('/webhooks/hubspot', [WebhookController::class, 'handleHubspot']);
+
+// Login routes. Need web middleware for session management
 Route::middleware(['web'])->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/logout', [AuthController::class, 'logout']);//needs web middleware group
 });
 
-
+//Api routes that need authentication
 Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::get('/user', [AuthController::class, 'user']);//needs auth:sanctum to ensure csrf
@@ -53,7 +57,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Activities
     Route::get('/activities', [ActivityController::class, 'index']);
 
-    //Hubspot Webhook
-    Route::post('/webhooks/hubspot', [WebhookController::class, 'handleHubspot']);
 });
 

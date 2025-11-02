@@ -14,22 +14,18 @@
           "active": true
         },
         {
+          "subscriptionType": "object.creation",
+          "objectType": "deal",
+          "active": true
+        },
+        {
           "subscriptionType": "object.propertyChange",
-          "objectType": "contact",
-          "propertyName": "firstname",
+          "objectType": "deal",
+          "propertyName": "dealstage",
           "active": true
         }
       ],
       "legacyCrmObjects": [
-        {
-          "subscriptionType": "contact.propertyChange",
-          "propertyName": "lastname",
-          "active": true
-        },
-        {
-          "subscriptionType": "contact.deletion",
-          "active": true
-        }
       ],
       "hubEvents": [
         {
