@@ -18,10 +18,12 @@ use Illuminate\Support\Facades\Log;
 class HubspotController extends Controller
 {
     protected HubspotService $hubspot;
+    protected HubspotTokenManager $tokenManager;
 
-    public function __construct(HubspotService $hubspot)
+    public function __construct(HubspotService $hubspot, HubspotTokenManager $tokenManager)
     {
         $this->hubspot = $hubspot;
+        $this->tokenManager = $tokenManager;
     }
 
     /**
@@ -143,23 +145,51 @@ class HubspotController extends Controller
         PipelineService $pipelineService,
         DealService $dealService,
         ContactService $contactService,
-        CompanyService $companyService,
-        HubSpotTokenManager $tokenManager
+        CompanyService $companyService
     ) {
         $user = auth()->user();
         $account = $user->hubspotAccount;
 
         if (!$account) {
+            Log::warning('No HubSpot account found for user during sync', ['user_id' => $user->id]);
             return response()->json(['error' => 'No connected HubSpot account'], 400);
         }
 
-        $pipelineService->sync($account, $tokenManager);
-        $dealService->sync($account, $tokenManager);
-        $contactService->sync($account, $tokenManager);
-        $companyService->sync($account, $tokenManager);
+        try {
+            // Run all sync operations
+            $pipelineService->sync($account, $this->tokenManager);
+            $dealService->sync($account, $this->tokenManager);
+            $contactService->sync($account, $this->tokenManager);
+            $companyService->sync($account, $this->tokenManager);
 
-        return response()->json(['message' => 'HubSpot data synced successfully']);
+            // Log sync completion as an activity
+            Activity::create([
+                'hubspot_account_id' => $account->id,
+                'object_type' => 'integration',
+                'event_type' => 'sync',
+                'object_id' => null,
+                'occurred_at' => now(),
+                'title' => 'Integration Synced',
+                'description' => 'HubSpot data synced successfully.',
+                'details' => [
+                    'pipelines' => 'synced',
+                    'deals' => 'synced',
+                    'contacts' => 'synced',
+                    'companies' => 'synced',
+                ],
+            ]);
+
+            Log::info('HubSpot sync completed successfully', ['user_id' => $user->id]);
+            return response()->json(['message' => 'HubSpot data synced successfully']);
+        } catch (\Exception $e) {
+            Log::error('HubSpot sync failed', [
+                'user_id' => $user->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json(['error' => 'HubSpot sync failed: ' . $e->getMessage()], 500);
+        }
+
     }
-
 
 }

@@ -22,7 +22,7 @@ class ContactService
      */
     public function sync(HubspotAccount $account, HubSpotTokenManager $tokenManager): bool
     {
-        $response = $this->hubSpot->getContactsWithDetails($account, $tokenManager);
+        $response = $this->hubspot->getContactsWithDetails($account, $tokenManager);
 
         if (!isset($response['results'])) {
             logger()->error('Contact sync failed', ['response' => $response]);
