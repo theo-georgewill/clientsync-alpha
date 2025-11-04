@@ -27,13 +27,13 @@ const Navbar = () => {
 	};
 	return (
 		<nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3 vw-100 d-flex justify-content-between">
-			<a className="navbar-brand" href="/">ClientSync</a>
-			
-			<div className="d-flex">
+
+
+			<div className="d-flex ms-auto">
 				<Button className="me-2" onClick={handleSyncNow} disabled={syncing} variant="success">
 					{syncing ? "Syncing..." : "Sync Now"}
 				</Button>
-				
+
 				<Dropdown>
 					<Dropdown.Toggle id="dropdown-profile">
 						<FontAwesomeIcon icon={faUser} /> Profile

@@ -51,12 +51,12 @@ export default function Deals() {
 				id: stage.id,
 				title: (
 					<div className="flex flex-col">
-					<span className="font-semibold text-sm">
-						{pipeline.label}: {stage.label}
-					</span>
-					<span className="text-xs text-gray-500">
-						{cards.length} deal{cards.length !== 1 ? "s" : ""}
-					</span>
+						<span className="font-semibold me-4 text-sm">
+							{stage.label}
+						</span>
+						<span className="text-xs text-gray-500">
+							{cards.length} deal{cards.length !== 1 ? "s" : ""}
+						</span>
 					</div>
 				),
 				cards,
@@ -149,7 +149,7 @@ export default function Deals() {
 				renderCard={(card) => (
 				<div
 					style={{ cursor: "pointer" }}
-					className="p-2 border rounded bg-white shadow-sm hover:bg-gray-100"
+					className="p-2 my-2 border rounded bg-white shadow-sm hover:bg-gray-100"
 				>
 					<h5 className="text-sm font-semibold">{card.title}</h5>
 					<p className="text-xs text-gray-500">{card.description}</p>

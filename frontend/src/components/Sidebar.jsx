@@ -1,31 +1,50 @@
-// src/components/Sidebar.jsx
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 
 const Sidebar = () => {
 	return (
-		<div className="bg-light border-end vh-100 vh-auto p-3" style={{ width: '250px', minHeight: 'auto' }}>
-			<h5>Menu</h5>
-			<ul className="nav flex-column">
+		<div
+			className="d-flex flex-column p-3 text-white bg-dark vh-100 shadow"
+			style={{ width: '250px'}}
+		>
+			<h5 className="mb-4 text-center fw-bold">ClientSync</h5>
+			<ul className="nav nav-pills flex-column mb-auto">
 				<li className="nav-item">
-					<Link className="nav-link" to="/">Dashboard</Link>
+					<NavLink to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : 'text-white'}`}>
+						<i className="bi bi-speedometer2 me-2"></i> Dashboard
+					</NavLink>
 				</li>
-				<li className="nav-item">
-					<Link className="nav-link" to="/contacts">Contacts</Link>
+				<li>
+					<NavLink to="/contacts" className={({ isActive }) => `nav-link ${isActive ? 'active' : 'text-white'}`}>
+						<i className="bi bi-people me-2"></i> Contacts
+					</NavLink>
 				</li>
-				<li className="nav-item">
-					<Link className="nav-link" to="/deals">Deals</Link>
+				<li>
+					<NavLink to="/deals" className={({ isActive }) => `nav-link ${isActive ? 'active' : 'text-white'}`}>
+						<i className="bi bi-briefcase me-2"></i> Deals
+					</NavLink>
 				</li>
-				<li className="nav-item">
-					<Link className="nav-link" to="/integrations">Integrations</Link>
+				<li>
+					<NavLink to="/integrations" className={({ isActive }) => `nav-link ${isActive ? 'active' : 'text-white'}`}>
+						<i className="bi bi-plug me-2"></i> Integrations
+					</NavLink>
 				</li>
-				<li className="nav-item">
-					<Link className="nav-link" to="/activities">Activities</Link>
+				<li>
+					<NavLink to="/activities" className={({ isActive }) => `nav-link ${isActive ? 'active' : 'text-white'}`}>
+						<i className="bi bi-calendar-check me-2"></i> Activities
+					</NavLink>
 				</li>
-				<li className="nav-item">
-					<Link className="nav-link" to="/settings">Settings</Link>
+				<li>
+					<NavLink to="/settings" className={({ isActive }) => `nav-link ${isActive ? 'active' : 'text-white'}`}>
+						<i className="bi bi-gear me-2"></i> Settings
+					</NavLink>
 				</li>
 			</ul>
+
+			<hr />
+			<div className="text-center small text-secondary">
+				© 2025 Tedtek Solutions
+			</div>
 		</div>
 	);
 };
