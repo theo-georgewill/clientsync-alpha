@@ -61,7 +61,7 @@ HUBSPOT_REDIRECT_URI=http://localhost:8000/hubspot/callback
 Use this URL to configure HubSpot webhooks:
 ```ruby
 https://yourdomain.com/api/webhook/hubspot
-🧩 Folder Structure
+    Folder Structure
 clientsync-alpha/
 ├── backend/ (Laravel)
 ├── frontend/ (React + Vite)
