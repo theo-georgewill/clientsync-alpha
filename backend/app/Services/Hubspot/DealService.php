@@ -6,27 +6,27 @@ use App\Models\Deal;
 use App\Models\Pipeline;
 use App\Models\Stage;
 use App\Models\HubspotAccount;
-use App\Services\HubSpot\HubSpotTokenManager;
+use App\Services\HubSpot\HubspotTokenManager;
 
 class DealService
 {
-    protected HubSpotService $hubSpot;
+    protected HubspotService $hubspot;
 
-    public function __construct(HubSpotService $hubSpot)
+    public function __construct(HubspotService $hubspot)
     {
-        $this->hubSpot = $hubSpot;
+        $this->hubspot = $hubspot;
     }
 
     /**
      * Sync deals from HubSpot.
      *
      * @param HubspotAccount $account
-     * @param HubSpotTokenManager $tokenManager
+     * @param HubspotTokenManager $tokenManager
      * @return bool
      */
-    public function sync(HubspotAccount $account, HubSpotTokenManager $tokenManager): bool
+    public function sync(HubspotAccount $account, HubspotTokenManager $tokenManager): bool
     {
-        $response = $this->hubSpot->getDeals($account, $tokenManager);
+        $response = $this->hubspot->getDeals($account, $tokenManager);
 
         if (!isset($response['results'])) {
             logger()->error('Deal sync failed', ['response' => $response]);
@@ -72,13 +72,13 @@ class DealService
      * Create a new deal in HubSpot.
      *
      * @param int $userId
-     * @param HubSpotTokenManager $tokenManager
+     * @param HubspotTokenManager $tokenManager
      * @param array $data
      * @return array
      */
-    public function createDeal(int $userId, HubSpotTokenManager $tokenManager, array $data): array
+    public function createDeal(HubspotAccount $account, HubspotTokenManager $tokenManager, array $data): array
     {
-        return $this->hubSpot->createDeal($userId, $tokenManager, $data);
+        return $this->hubspot->createDeal($account, $tokenManager, $data);
     }
 
     /**
@@ -90,8 +90,8 @@ class DealService
      * @param array $data
      * @return array
      */
-    public function updateDeal(int $userId, HubSpotTokenManager $tokenManager, string $dealId, array $data): array
+    public function updateDeal(int $userId, HubspotTokenManager $tokenManager, string $dealId, array $data): array
     {
-        return $this->hubSpot->updateDeal($userId, $tokenManager, $dealId, $data);
+        return $this->hubspot->updateDeal($userId, $tokenManager, $dealId, $data);
     }
 }

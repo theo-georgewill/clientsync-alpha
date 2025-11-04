@@ -25,11 +25,17 @@ class ContactController extends Controller
      */
     public function index()
     {
-        $contacts = Contact::latest()->get();
+        $contacts = Contact::latest()->paginate();
 
         return response()->json([
             'status' => 'success',
-            'data' => $contacts,
+            'data' => $contacts->items(),
+            'meta' => [
+                'current_page' => $contacts->currentPage(),
+                'last_page' => $contacts->lastPage(),
+                'per_page' => $contacts->perPage(),
+                'total' => $contacts->total(),
+            ],
         ]);
     }
 

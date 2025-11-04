@@ -10,7 +10,6 @@ export default function MainLayout() {
     <div className="d-flex">
       <Sidebar />
       <div className="flex-grow container">
-        
         <main className="p-4 ">
           <Outlet />
         </main>

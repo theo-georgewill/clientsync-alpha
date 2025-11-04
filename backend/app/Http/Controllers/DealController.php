@@ -24,11 +24,13 @@ class DealController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'dealname' => 'required|string',
             'amount' => 'nullable|numeric',
             'pipeline' => 'required|string',
             'dealstage' => 'required|string',
+			'pipeline_id' => 'required|string',
+			'stage_id' => 'required|string',
         ]);
 
         $user = $request->user();
@@ -36,16 +38,18 @@ class DealController extends Controller
 
         try {
             // Create in HubSpot first
-            $data = $request->only(['dealname', 'amount', 'pipeline', 'dealstage']);
-            $hubspotDeal = $this->dealService->createDeal($data, $hubspotAccount->access_token);
+            $data = $validated;
+            $hubspotDeal = $this->dealService->createDeal($hubspotAccount, $this->tokenManager, $validated);
 
             // Then store in local DB
             $deal = Deal::create([
                 'hubspot_account_id' => $hubspotAccount->id,
                 'deal_id' => $hubspotDeal['id'], // HubSpot deal ID
                 'dealname' => $data['dealname'],
-                'pipeline_id' => $data['pipeline'],
-                'stage_id' => $data['dealstage'],
+                'pipeline_id' => $data['pipeline_id'],
+                'pipeline' => $data['pipeline'],
+                'stage_id' => $data['stage_id'],
+                'stage' => $data['dealstage'],
                 'amount' => $data['amount'],
                 'created_at' => now(),
                 'updated_at' => now()

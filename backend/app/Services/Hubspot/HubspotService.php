@@ -134,19 +134,30 @@ class HubspotService
     /**
      * Create a new deal.
      */
-    public function createDeal(int $userId, HubSpotTokenManager $tokenManager, array $data): array
+    public function createDeal(HubspotAccount $account, HubSpotTokenManager $tokenManager, array $data): array
     {
-        $token = $tokenManager->getAccessToken($userId);
+        $token = $tokenManager->getAccessTokenFromAccount($account);
 
+        //build payload
+        $payload = [
+            "properties" => [
+                "dealstage" => $data['stage_id'] ?? NULL,
+                "pipeline" => $data['pipeline_id'] ?? NULL,
+                "dealname" => $data['dealname'] ?? NULL,
+                "amount" => $data['amount'] ?? NULL,
+            ]
+        ];
+
+        //send request to HubSpot API
         $response = Http::withToken($token)
-            ->post('https://api.hubapi.com/crm/v3/objects/deals', [
-                'properties' => $data,
-            ]);
+            ->post('https://api.hubapi.com/crm/v3/objects/deals', $payload);
 
         if ($response->failed()) {
             Log::error('Error creating deal', ['body' => $response->body()]);
             throw new \Exception('Error creating deal: ' . $response->body());
         }
+
+        Log::info('Deal created in HubSpot', ['response' => $response->json()]);
 
         return $response->json();
     }

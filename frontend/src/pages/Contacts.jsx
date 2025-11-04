@@ -1,9 +1,14 @@
-import { useState, useEffect } from "react";
-import { Table, Button, Form, InputGroup, Modal } from "react-bootstrap";
-import api from "@/services/api"; // Axios wrapper
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { Table, Button, Form, Modal, Spinner } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchContacts, createContact, clearStatus } from "@/store/slices/contactSlice";
 
 export default function Contacts() {
-  const [contacts, setContacts] = useState([]);
+  const dispatch = useDispatch();
+  const { contacts, loading, error, success, page, hasMore } = useSelector(
+    (state) => state.contacts
+  );
+
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({
@@ -12,47 +17,60 @@ export default function Contacts() {
     email: "",
     phone: "",
   });
-  const [loading, setLoading] = useState(false);
 
-  // Fetch contacts from your API on mount
+  // ✅ Fetch first page on mount
   useEffect(() => {
-    fetchContacts();
-  }, []);
+    dispatch(fetchContacts(1));
+  }, [dispatch]);
 
-  const fetchContacts = async () => {
-    try {
-      const { data } = await api.get("/api/contacts");
-      setContacts(data.data || []);
-    } catch (error) {
-      console.error("Failed to load contacts", error);
+  // ✅ Reset success/error after creation
+  useEffect(() => {
+    if (success || error) {
+      const timeout = setTimeout(() => dispatch(clearStatus()), 3000);
+      return () => clearTimeout(timeout);
     }
+  }, [success, error, dispatch]);
+
+  // ✅ Handle form submission
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(createContact(form))
+      .unwrap()
+      .then(() => {
+        setShowModal(false);
+        setForm({ firstname: "", lastname: "", email: "", phone: "" });
+      })
+      .catch(() => {});
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  // ✅ Infinite scroll observer
+  const observer = useRef();
+  const lastContactRef = useCallback(
+    (node) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
 
-    try {
-      const { data } = await api.post("/api/contacts", {
-        ...form,
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          dispatch(fetchContacts(page + 1));
+        }
       });
 
-      setContacts((prev) => [data.data.local, ...prev]);
-      setShowModal(false);
-      setForm({ firstname: "", lastname: "", email: "", phone: "" });
-    } catch (error) {
-      console.error("Error creating contact", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filtered = contacts.filter(
-    (contact) =>
-      contact.firstname?.toLowerCase().includes(search.toLowerCase()) ||
-      contact.lastname?.toLowerCase().includes(search.toLowerCase()) ||
-      contact.email?.toLowerCase().includes(search.toLowerCase())
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore, page, dispatch]
   );
+
+  // ✅ Filter contacts by search term
+  const filteredContacts = useMemo(() => {
+    if (!contacts) return [];
+    return contacts.filter(
+      (c) =>
+        c.firstname?.toLowerCase().includes(search.toLowerCase()) ||
+        c.lastname?.toLowerCase().includes(search.toLowerCase()) ||
+        c.email?.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [contacts, search]);
 
   return (
     <div>
@@ -63,13 +81,13 @@ export default function Contacts() {
         </Button>
       </div>
 
-      <InputGroup className="mb-3">
-        <Form.Control
-          placeholder="Search contacts..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </InputGroup>
+      <Form.Control
+        type="text"
+        placeholder="Search contacts..."
+        className="mb-3"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
 
       <Table hover responsive>
         <thead>
@@ -81,15 +99,21 @@ export default function Contacts() {
           </tr>
         </thead>
         <tbody>
-          {filtered.length > 0 ? (
-            filtered.map((contact) => (
-              <tr key={contact.id || contact.contact_id}>
-                <td>{contact.firstname}</td>
-                <td>{contact.lastname}</td>
-                <td>{contact.email}</td>
-                <td>{contact.phone}</td>
-              </tr>
-            ))
+          {filteredContacts.length > 0 ? (
+            filteredContacts.map((contact, index) => {
+              const isLast = index === filteredContacts.length - 1;
+              return (
+                <tr
+                  key={contact.id || contact.contact_id}
+                  ref={isLast ? lastContactRef : null}
+                >
+                  <td>{contact.firstname}</td>
+                  <td>{contact.lastname}</td>
+                  <td>{contact.email}</td>
+                  <td>{contact.phone}</td>
+                </tr>
+              );
+            })
           ) : (
             <tr>
               <td colSpan="4" className="text-center text-muted">
@@ -100,7 +124,14 @@ export default function Contacts() {
         </tbody>
       </Table>
 
-      {/* Add Contact Modal */}
+      {/* ✅ Loading indicator for pagination */}
+      {loading && (
+        <div className="text-center py-3">
+          <Spinner animation="border" size="sm" /> Loading more...
+        </div>
+      )}
+
+      {/* ✅ Create Contact Modal */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Header closeButton>
           <Modal.Title>Create New Contact</Modal.Title>
@@ -123,7 +154,9 @@ export default function Contacts() {
               <Form.Control
                 type="text"
                 value={form.lastname}
-                onChange={(e) => setForm({ ...form, lastname: e.target.value })}
+                onChange={(e) =>
+                  setForm({ ...form, lastname: e.target.value })
+                }
                 required
               />
             </Form.Group>
