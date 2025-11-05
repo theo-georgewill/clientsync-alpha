@@ -7,7 +7,7 @@ const Sidebar = () => {
 			className="d-flex flex-column p-3 text-white bg-dark vh-100 shadow"
 			style={{ width: '250px'}}
 		>
-			<h5 className="mb-4 text-center fw-bold">ClientSync</h5>
+			
 			<ul className="nav nav-pills flex-column mb-auto">
 				<li className="nav-item">
 					<NavLink to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : 'text-white'}`}>

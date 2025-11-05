@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Table, Button, Form, InputGroup, Modal } from 'react-bootstrap';
+import { Table, Button, Form, InputGroup, Modal} from 'react-bootstrap';
 import Board, { moveCard } from "@asseinfo/react-kanban";
 import "@asseinfo/react-kanban/dist/styles.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -50,12 +50,9 @@ export default function Deals() {
 				columns.push({
 				id: stage.id,
 				title: (
-					<div className="flex flex-col">
-						<span className="font-semibold me-4 text-sm">
-							{stage.label}
-						</span>
-						<span className="text-xs text-gray-500">
-							{cards.length} deal{cards.length !== 1 ? "s" : ""}
+					<div className="d-flex justify-content-between align-items-center">
+						<span className="font-semibold flex me-4 text-sm">
+							{stage.label} ({cards.length})
 						</span>
 					</div>
 				),
@@ -161,7 +158,7 @@ export default function Deals() {
         </div>
       </div>
 
-      {/* 🧩 Create Deal Modal */}
+      {/* Create Deal Modal */}
 		<Modal show={showModal} onHide={handleCloseModal} centered>
 			<Modal.Header closeButton>
 				<Modal.Title>Create New Deal</Modal.Title>

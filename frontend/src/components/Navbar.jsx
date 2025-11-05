@@ -27,9 +27,9 @@ const Navbar = () => {
 	};
 	return (
 		<nav className="navbar navbar-expand-lg navbar-dark bg-dark px-3 vw-100 d-flex justify-content-between">
+			<Link className="navbar-brand fw-bold" to="/">ClientSync</Link>
 
-
-			<div className="d-flex ms-auto">
+			<div className="d-flex">
 				<Button className="me-2" onClick={handleSyncNow} disabled={syncing} variant="success">
 					{syncing ? "Syncing..." : "Sync Now"}
 				</Button>
