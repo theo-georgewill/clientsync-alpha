@@ -26,10 +26,10 @@ export default function Settings() {
 
   const fetchProfile = async () => {
     try {
-      const { data } = await api.get('/api/user');
+      const { data } = await api.get('/api/user/profile');
       setProfile({
-        fullName: data.name || '',
-        email: data.email || '',
+        fullName: data.data.name || '',
+        email: data.data.email || '',
       });
     } catch (err) {
       console.error('Failed to fetch profile:', err);
@@ -51,7 +51,7 @@ export default function Settings() {
   const updateProfile = async () => {
     setSavingProfile(true);
     try {
-      await api.patch('/api/user', profile);
+      await api.patch('/api/user/profile', profile);
       alert('Profile updated successfully!');
     } catch (err) {
       console.error('Failed to update profile:', err);
@@ -86,7 +86,7 @@ export default function Settings() {
   const handleSync = async () => {
     setSyncing(true);
     try {
-      await api.post('/api/sync');
+      await api.post('/api/hubspot/sync');
       alert('Sync completed successfully!');
     } catch (err) {
       console.error('Sync failed:', err);

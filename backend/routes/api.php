@@ -9,6 +9,7 @@ use App\Http\Controllers\PipelineController;
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\UserController;
 use App\Models\User;
 
 
@@ -54,5 +55,21 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Activities
     Route::get('/activities', [ActivityController::class, 'index']);
 
+
+
+    // Get authenticated user's profile
+    Route::get('/user/profile', [UserController::class, 'profile']);
+
+    // Update profile info (name, email)
+    Route::patch('/user/profile', [UserController::class, 'updateProfile']);
+
+    // Update password
+    Route::patch('/user/password', [UserController::class, 'updatePassword']);
+
+    // Soft delete account
+    Route::delete('/user/account', [UserController::class, 'deleteAccount']);
+
+    // Optional: Restore soft-deleted user (admin only)
+    // Route::patch('/user/account/restore/{id}', [UserController::class, 'restoreAccount']);
 });
 
