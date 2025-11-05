@@ -128,7 +128,7 @@ export default function Deals() {
 
   return (
     <>
-      	<div className="d-flex items-center justify-content-between mb-4" style={{ width: "90%" }}>
+      	<div className="d-flex items-center justify-content-between mb-4" style={{ maxWidth: "1150px" }}>
         	<h4 className="text-xl font-semibold">Deals Board</h4>
 			<div>
 				<Button onClick={handleShowModal} variant="primary" className="me-2">
@@ -137,9 +137,8 @@ export default function Deals() {
 			</div>
       	</div>
 
-      {/* Deals Board */}
-      <div className="overflow-x-auto pb-4" style={{ whiteSpace: "nowrap" }}>
-        <div style={{ width: "90%" }}>
+		{/* Deals Board */}
+		<div className="deals-board-wrapper">
 			<Board
 				onCardDragEnd={handleCardMove}
 				disableColumnDrag
@@ -155,8 +154,7 @@ export default function Deals() {
 			>
 				{board}
 			</Board>
-        </div>
-      </div>
+		</div>
 
       {/* Create Deal Modal */}
 		<Modal show={showModal} onHide={handleCloseModal} centered>

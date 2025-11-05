@@ -1,3 +1,4 @@
+// src/components/Sidebar.jsx
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 
@@ -7,7 +8,7 @@ const Sidebar = () => {
 			className="d-flex flex-column p-3 text-white bg-dark vh-100 shadow"
 			style={{ width: '250px'}}
 		>
-			
+
 			<ul className="nav nav-pills flex-column mb-auto">
 				<li className="nav-item">
 					<NavLink to="/" className={({ isActive }) => `nav-link ${isActive ? 'active' : 'text-white'}`}>

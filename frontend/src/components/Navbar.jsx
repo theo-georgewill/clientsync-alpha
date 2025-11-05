@@ -31,7 +31,7 @@ const Navbar = () => {
 
 			<div className="d-flex">
 				<Button className="me-2" onClick={handleSyncNow} disabled={syncing} variant="success">
-					{syncing ? "Syncing..." : "Sync Now"}
+					<i className="bi-arrow-repeat"></i> {syncing ? "Syncing..." : "Sync Now"}
 				</Button>
 
 				<Dropdown>
